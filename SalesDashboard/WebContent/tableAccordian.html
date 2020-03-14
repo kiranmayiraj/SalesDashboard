@@ -1,0 +1,895 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+	<title>Dashboard 1</title>
+	
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+  	<script src='https://kit.fontawesome.com/a076d05399.js'></script>
+  	
+  	<script src="https://code.highcharts.com/highcharts.js"></script>
+	<script src="https://code.highcharts.com/modules/export-data.js"></script>
+	
+  	<style>
+  	th
+  	{
+  	  		vertical-align: middle !important;
+  	}
+  	#subHead td
+  	{
+  		border-bottom-color: #343a40;
+  	}
+  	tr.hide-table-padding td 
+  	{
+  		padding: 0;
+	}
+	#collapsibleTable
+	{
+		align-self: center;
+	}
+	.expand-button 
+	{
+		position: relative;
+	}
+	.clickable .expand-button:after
+	{
+  		position: absolute;
+  		left:.75rem;
+  		top: 50%;
+  		transform: translate(0, -50%);
+  		content: '-';
+	}
+	.clickable.collapsible .expand-button:after
+	{
+  		content: '+';
+	}
+	tbody.collapse.in 
+	{
+  		display: table-row-group;
+	}
+  	</style>
+  	
+	<script>
+	$(document).ready()
+	{
+		function fnUpdateData3()
+		{
+			var period = $("#period").val();
+			$.ajax(
+			{
+				url: "SummaryData",
+				type: "GET",
+				data: 
+				{
+					period: period
+				},
+				success: function(data)
+				{
+					fnPopulateData(data);
+				}
+			});
+		}
+		function fnPopulateData(data)
+		{
+			$("#ordersVal").html($(data).find("Orders").text());
+			$("#salesVal").html("\n" + $(data).find("Sales").text());
+			$("#productsVal").html("\n" + $(data).find("Products").text());
+			$("#avgProductPriceVal").html("\n" + $(data).find("AvgProductPrice").text());
+			$("#noOfChangeInPriceVal").html("\n" + $(data).find("NoOfChangeInPrice").text());
+			$("#minPriceVal").html("\n" + $(data).find("MinPrice").text());
+			$("#maxPriceVal").html("\n" + $(data).find("MaxPrice").text());
+			$("#avgBasketSizeVal").html("\n" + $(data).find("BasketSize").text());
+			$("#avgBasketVal").html("\n" + $(data).find("BasketValue").text());
+			$("#O_ThirdPartyVal").html("\n" + $(data).find("OThirdParty").text());
+			$("#O_OnlineOrderingVal").html("\n" + $(data).find("OOnlineOrdering").text());
+			$("#O_FoodPandaVal").html("\n" + $(data).find("OFoodPanda").text());
+			$("#O_CateringVal").html("\n" + $(data).find("OCatering").text());
+			$("#O_DeliveryVal").html("\n" + $(data).find("ODelivery").text());
+			$("#O_ToGoVal").html("\n" + $(data).find("OToGo").text());
+			$("#O_EatInVal").html("\n" + $(data).find("OEatIn").text());
+			$("#S_ThirdPartyVal").html("\n" + $(data).find("SThirdParty").text());
+			$("#S_OnlineOrderingVal").html("\n" + $(data).find("SOnlineOrdering").text());
+			$("#S_FoodPandaVal").html("\n" + $(data).find("SFoodPanda").text());
+			$("#S_CateringVal").html("\n" + $(data).find("SCatering").text());
+			$("#S_DeliveryVal").html("\n" + $(data).find("SDelivery").text());
+			$("#S_ToGoVal").html("\n" + $(data).find("SToGo").text());
+			$("#S_EatInVal").html("\n" + $(data).find("SEatIn").text());
+			$("#noOfDiscVal").html("\n" + $(data).find("NoOfDisc").text());
+			$("#avgDiscVal").html("\n" + $(data).find("AvgDisc").text());
+			$("#noOfReturnsVal").html("\n" + $(data).find("NoOfReturns").text());
+			$("#salesLostVal").html("\n" + $(data).find("SalesLost").text());
+			
+		}
+	};
+	</script>
+	<script>
+	function fnDrawChart()
+	{
+		Highcharts.chart('chart1', 
+		{
+			chart: 
+			{
+		        zoomType: 'xy'
+		    },
+		    title: 
+		    {
+		        text: null
+		    },
+		    xAxis: 
+		    [{
+		        categories: ['Jan/2018', 'Feb/2018', 'Mar/2018', 'Apr/2018', 'May/2018', 'Jun/2018', 'Jul/2018', 'Aug/2018', 'Sep/2018', 'Oct/2018', 'Nov/2018', 'Dec/2018', 'Jan/2019', 'Feb/2019', 'Mar/2019', 'Apr/2019', 'May/2019', 'Jun/2019', 'Jul/2019'],
+		        crosshair: true
+		    }],
+		    yAxis: 
+		    [{ // Primary yAxis
+		        labels: 
+		        {
+		            style: 
+		            {
+		                color: Highcharts.getOptions().colors[1]
+		            }
+		        },
+		        title: 
+		        {
+		            text: 'Orders',
+		            style: 
+		            {
+		                color: Highcharts.getOptions().colors[1]
+		            }
+		        },
+		        min: 0,
+		        max: 40000,
+		        gridLineWidth: 0
+		        
+		    }, 
+		    { // Secondary yAxis
+		        title: 
+		        {
+		            text: 'Sales',
+		            style: 
+		            {
+		                color: Highcharts.getOptions().colors[0]
+		            }
+		        },
+		        labels: 
+		        {
+		            format: '$ {value}',
+		            style: 
+		            {
+		                color: Highcharts.getOptions().colors[0]
+		            }
+		        },
+		        opposite: true,
+		        min: 0,
+		        max: 400000,
+		        gridLineWidth: 0
+		    }],
+		    tooltip: 
+		    {
+		        shared: true
+		    },
+		    legend: 
+		    {
+		    	enabled: false
+		    },
+  		    credits:
+  		    {
+  		    	enabled: false
+  		    },
+		    series: 
+		    [{
+		        name: 'Orders',
+		        type: 'column',
+		        data: [27767, 27026, 29212, 28798, 29644, 26916, 30274, 32319, 28618, 30111, 30403, 33678, 32353, 28243, 32151, 30375, 29274, 31414, 33717]
+		    }, 
+		    {
+		        name: 'Sales',
+		        type: 'spline',
+		        yAxis: 1,
+		        data: [285480, 276575, 296085, 292070, 302470, 277712, 306113, 319760, 296776, 302926, 319357, 378089, 314404, 293867, 330972, 316839, 305343, 318438, 316988]
+		    }]
+		});
+	}
+	</script>
+</head>
+<body onload="fnDrawChart()">
+<div class="container-fluid">
+	<h4>Sales Dashboard</h4>
+	<div class="row">
+		<div class="col-2 col-sm-2 col-md-2 col-lg-2 col-xl-2">
+			<label for="store">Store:</label>
+	    	<select id="store" name="store" onchange="fnUpdateData1()">
+				<option>All</option>
+				<option>Store 1</option>
+				<option>Store 2</option>
+				<option>Store 3</option>
+				<option>Store 4</option>
+			</select>
+	    </div>
+	    <div class="col-2 col-sm-2 col-md-2 col-lg-2 col-xl-2">
+	    	<label for="pos">POS:</label>
+	    	<select id="pos" name="pos" onchange="fnUpdateData2()">
+				<option>All</option>
+				<option>POS 1</option>
+				<option>POS 2</option>
+				<option>POS 3</option>
+			</select>
+	    </div>
+	    <div class="col-2 col-sm-2 col-md-2 col-lg-2 col-xl-2">
+	    	<label for="period">Period:</label>
+		    <select id="period" name="period" onchange="fnUpdateData3()">
+				<option>Yearly</option>
+				<option>Monthly</option>
+				<option>Daily</option>
+				<option>Hourly</option>
+			</select>
+		</div>
+		<div class="col-2 col-sm-2 col-md-2 col-lg-2 col-xl-2">
+			<label for="category">Category:</label>
+		    <select id="category" name="category" onchange="fnUpdateData4()">
+				<option>Yearly</option>
+				<option>Monthly</option>
+				<option>Daily</option>
+				<option>Hourly</option>
+			</select>
+		</div>
+		<div class="col-2 col-sm-2 col-md-2 col-lg-2 col-xl-2">
+			<label for="subCategory">Sub-Category:</label>
+		    <select id="subCategory" name="subCategory" onchange="fnUpdateData5()">
+				<option>Yearly</option>
+				<option>Monthly</option>
+				<option>Daily</option>
+				<option>Hourly</option>
+			</select>
+		</div>
+		<div class="col-2 col-sm-2 col-md-2 col-lg-2 col-xl-2">
+			<label for="class">Class:</label>
+		    <select id="class" name="class" onchange="fnUpdateData6()">
+				<option>Yearly</option>
+				<option>Monthly</option>
+				<option>Daily</option>
+				<option>Hourly</option>
+			</select>
+		</div>
+  	</div>
+  	<div class="row">
+  		<div class="col-12 col-sm-12 col-md-8 col-lg-8 col-xl-8">
+  			<div id="chart1"></div>
+  		</div>
+  		<div class="col-12 col-sm-12 col-md-4 col-lg-4 col-xl-4" id="collapsibleTable">
+  			<!-- <div class="table-responsive">
+  				<table class="table">
+					<thead>
+				    	<tr>
+				        	<th scope="col">#</th>
+				        	<th scope="col" colspan="3">Collapsible Tables</th>
+				    	</tr>
+				    </thead>
+    				<tbody>
+      					<tr class="accordion-toggle collapsed" id="accordion1" data-toggle="collapse" data-parent="#accordion1" href="#collapseOne">
+							<td class="expand-button"></td>
+							<td>KPI</td>
+							<td>Value</td>
+							<td>Lift</td>
+						</tr>
+							<tr id="collapseOne" class="hide-table-padding">
+								<td></td>
+		  						<th>Orders</th>
+		  						<td id="ordersVal">372,656</td>
+		  						<td style="border-right:none" id="liftOrdersVal">187%&nbsp;</td>
+		  						<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  					</tr>
+		  					<tr id="collapseOne">
+		  						<td></td>
+		  						<th>Sales</th>
+		  						<td id="salesVal">$3,813,758</td>
+		  						<td style="border-right:none" id="liftSalesVal">187%&nbsp;</td>
+		  						<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  					</tr>
+		  					<tr id="collapseOne">
+		  						<td></td>
+		  						<th>Products</th>
+		  						<td id="productsVal">1,245,224</td>
+		  						<td style="border-right:none" id="liftProductsVal">193%&nbsp;</td>
+		  						<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  					</tr>
+		  					<tr id="collapseOne">
+		  						<td></td>
+		  						<th>Average Product Price</th>
+		  						<td id="avgProductPriceVal">$3</td>
+		  						<td style="border-right:none" id="liftAvgProductPriceVal">97%&nbsp;</td>
+		  						<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  					</tr>
+		  					<tr id="collapseOne">
+		  						<td></td>
+		  						<th>No of changes in price</th>
+		  						<td id="noOfChangeInPriceVal">1,344</td>
+		  						<td style="border-right:none" id="LiftNoOfChangeInPriceVal">161%&nbsp;</td>
+		  						<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  					</tr>
+		  					<tr id="collapseOne">
+		  						<td></td>
+		  						<th>Minimum Price</th>
+		  						<td id="minPriceVal">$0</td>
+		  						<td style="border-right:none" id="liftMinPriceVal">0%&nbsp;</td>
+		  						<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  					</tr>
+		  					<tr id="collapseOne">
+		  						<td></td>
+		  						<th>Maximum Price</th>
+		  						<td id="maxPriceVal">$193</td>
+		  						<td style="border-right:none" id="liftMaxPriceVal">93%&nbsp;</td>
+		  						<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  					</tr>
+		  					<tr id="collapseOne">
+		  						<td></td>
+		  						<th>Average Basket Size</th>
+		  						<td id="avgBasketSizeVal">10</td>
+		  						<td style="border-right:none" id="liftAvgBasketSizeVal">100%&nbsp;</td>
+		  						<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  					</tr>
+		  					<tr id="collapseOne">
+		  						<td></td>
+		  						<th>Average Basket Value</th>
+		  						<td id="avgBasketVal">$10</td>
+		  						<td style="border-right:none" id="liftAvgBasketVal">100%&nbsp;</td>
+		  						<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  					</tr>
+						<tr class="accordion-toggle collapsed" id="accordion2" data-toggle="collapse" data-parent="#accordion2" href="#collapseTwo">
+							<td class="expand-button"></td>
+							<td>Order Type(Orders)</td>
+							<td>Value</td>
+							<td>Lift</td>
+						</tr>
+							<tr id="collapseTwo">
+								<td></td>
+		  						<th>Third Party</th>
+			  					<td id="O_ThirdPartyVal">$44,763</td>
+			  					<td style="border-right:none" id="liftO_ThirdPartyVal">234%&nbsp;</td>
+			  					<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  					</tr>
+	  						<tr id="collapseTwo">
+		  						<td></td>
+		  						<th>Online Ordering</th>
+		  						<td id="O_OnlineOrderingVal">$28,129</td>
+		  						<td style="border-right:none" id="liftO_OnlineOrderingVal">391%&nbsp;</td>
+		  						<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  					</tr>
+		  					<tr id="collapseTwo">
+		  						<td></td>
+		  						<th>Food Panda</th>
+		  						<td id="O_FoodPandaVal">$44</td>
+		  						<td style="border-right:none" id="liftO_FoodPandaVal">25%&nbsp;</td>
+		  						<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  					</tr>
+		  					<tr id="collapseTwo">
+		  						<td></td>
+		  						<th>Catering</th>
+		  						<td id="O_CateringVal">$163</td>
+		  						<td style="border-right:none" id="liftO_CateringVal">709%&nbsp;</td>
+		  						<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  					</tr>
+		  					<tr id="collapseTwo">
+		  						<td></td>
+		  						<th>Delivery</th>
+		  						<td id="O_DeliveryVal">$29,149</td>
+		  						<td style="border-right:none" id="liftO_DeliveryVal">2205%&nbsp;</td>
+		  						<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  					</tr>
+		  					<tr id="collapseTwo">
+		  						<td></td>
+		  						<th>To go</th>
+		  						<td id="O_ToGoVal">$31,417</td>
+		  						<td style="border-right:none" id="liftO_ToGoVal">171%&nbsp;</td>
+		  						<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  					</tr>
+		  					<tr id="collapseTwo">
+		  						<td></td>
+		  						<th>Eat in</th>
+		  						<td id="O_EatInVal">$239,155</td>
+		  						<td style="border-right:none" id="liftO_EatInVal">156%&nbsp;</td>
+		  						<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  					</tr>
+						<tr class="accordion-toggle collapsed" id="accordion3" data-toggle="collapse" data-parent="#accordion3" href="#collapseThree">
+							<td class="expand-button"></td>
+							<td>Order Type(Sales)</td>
+							<td>Value</td>
+							<td>Lift</td>
+						</tr>
+							<tr id="collapseThree">
+								<td></td>
+		  						<th>Third Party</th>
+		  						<td id="S_ThirdPartyVal">$52,491</td>
+		  						<td style="border-right:none" id="liftS_ThirdPartyVal">168%&nbsp;</td>
+		  						<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  					</tr>
+		  					<tr id="collapseThree">
+		  						<td></td>
+		  						<th>Online Ordering</th>
+		  						<td id="S_OnlineOrderingVal">$32,309</td>
+		  						<td style="border-right:none" id="liftS_OnlineOrderingVal">233%&nbsp;</td>
+		  						<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  					</tr>
+		  					<tr id="collapseThree">
+		  						<td></td>
+		  						<th>Food Panda</th>
+		  						<td id="S_FoodPandaVal">$87</td>
+		  						<td style="border-right:none" id="liftS_FoodPandaVal">21%&nbsp;</td>
+		  						<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  					</tr>
+		  					<tr id="collapseThree">
+		  						<td></td>
+		  						<th>Catering</th>
+		  						<td id="S_CateringVal">$1047</td>
+		  						<td style="border-right:none" id="liftS_CateringVal">189%&nbsp;</td>
+		  						<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  					</tr>
+		  					<tr id="collapseThree">
+		  						<td></td>
+		  						<th>Delivery</th>
+		  						<td id="S_DeliveryVal">$27,534</td>
+		  						<td style="border-right:none" id="liftS_DeliveryVal">951%&nbsp;</td>
+		  						<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  					</tr>
+		  					<tr id="collapseThree">
+		  						<td></td>
+		  						<th>To go</th>
+		  						<td id="S_ToGoVal">$17,428</td>
+		  						<td style="border-right:none" id="liftS_ToGoVal">95%&nbsp;</td>
+		  						<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  					</tr>
+		  					<tr id="collapseThree">
+		  						<td></td>
+		  						<th>Eat in</th>
+		  						<td id="S_EatInVal">$200,084</td>
+		  						<td style="border-right:none" id="liftS_EatInVal">89%&nbsp;</td>
+		  						<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  					</tr>
+						<tr class="accordion-toggle collapsed" id="accordion4" data-toggle="collapse" data-parent="#accordion4" href="#collapseFour">
+							<td class="expand-button"></td>
+							<td>Discount &amp; Returns</td>
+							<td>Value</td>
+							<td>Lift</td>
+						</tr>
+							<tr id="collapseFour">
+								<td></td>
+		  						<th>Number of Discounts</th>
+		  						<td id="noOfDiscVal">107,432</td>
+		  						<td style="border-right:none" id="liftNofDiscVal">132%&nbsp;</td>
+		  						<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  					</tr>
+		  					<tr id="collapseFour">
+		  						<td></td>
+		  						<th>Average Discount</th>
+		  						<td id="avgDiscVal">$3</td>
+		  						<td style="border-right:none" id="liftAvgDiscVal">104%&nbsp;</td>
+		  						<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  					</tr>
+		  					<tr id="collapseFour">
+		  						<td></td>
+		  						<th>Number of Returns</th>
+		  						<td id="noOfReturnsVal">3,988</td>
+		  						<td style="border-right:none" id="liftNoOfReturnsVal">244%&nbsp;</td>
+		  						<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  					</tr>
+		  					<tr id="collapseFour">
+		  						<td></td>
+		  						<th>Sales Lost</th>
+		  						<td id="salesLostVal">$14,275</td>
+		  						<td style="border-right:none" id="liftSalesLostVal">247%&nbsp;</td>
+		  						<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  					</tr>
+    				</tbody>
+  				</table>
+			</div> -->
+			<table class="table table-bordered">
+    			<thead class="thead-dark">
+			        <tr>
+			            <th>#</th>
+			            <th colspan="4">Collapsible Tables</th>
+			        </tr>
+			    </thead>
+			    <tbody>
+			        <tr class="clickable collapsible" data-toggle="collapse" data-target="#group-of-rows-1" aria-expanded="false" aria-controls="group-of-rows-1">
+			            <td class="expand-button"></td>
+			            <td>KPI</td>
+			            <td>Value</td>
+			            <td colspan="2">Lift</td>
+			        </tr>
+    			</tbody>
+			    <tbody id="group-of-rows-1" class="collapse">
+			    	<tr class="table-primary">
+						<td></td>
+		  				<th>Orders</th>
+		  				<td id="ordersVal">372,656</td>
+		  				<td style="border-right:none" id="liftOrdersVal">187%&nbsp;</td>
+		  				<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  			</tr>
+		  			<tr class="table-primary">
+		  				<td></td>
+		  				<th>Sales</th>
+		  				<td id="salesVal">$3,813,758</td>
+		  				<td style="border-right:none" id="liftSalesVal">187%&nbsp;</td>
+		  				<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  			</tr>
+		  			<tr class="table-primary">
+		  				<td></td>
+		  				<th>Products</th>
+		  				<td id="productsVal">1,245,224</td>
+		  				<td style="border-right:none" id="liftProductsVal">193%&nbsp;</td>
+		  				<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  			</tr>
+					<tr class="table-primary">
+		  				<td></td>
+		  				<th>Average Product Price</th>
+		  				<td id="avgProductPriceVal">$3</td>
+		  				<td style="border-right:none" id="liftAvgProductPriceVal">97%&nbsp;</td>
+		  				<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  			</tr>
+		  			<tr class="table-primary">
+		  				<td></td>
+		  				<th>No of changes in price</th>
+		  				<td id="noOfChangeInPriceVal">1,344</td>
+		  				<td style="border-right:none" id="LiftNoOfChangeInPriceVal">161%&nbsp;</td>
+		  				<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  			</tr>
+		  			<tr class="table-primary">
+		  				<td></td>
+		  				<th>Minimum Price</th>
+		  				<td id="minPriceVal">$0</td>
+		  				<td style="border-right:none" id="liftMinPriceVal">0%&nbsp;</td>
+		  				<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  			</tr>
+		  			<tr class="table-primary">
+		  				<td></td>
+		  				<th>Maximum Price</th>
+		  				<td id="maxPriceVal">$193</td>
+		  				<td style="border-right:none" id="liftMaxPriceVal">93%&nbsp;</td>
+		  				<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  			</tr>
+		  			<tr class="table-primary">
+		  				<td></td>
+		  				<th>Average Basket Size</th>
+		  				<td id="avgBasketSizeVal">10</td>
+		  				<td style="border-right:none" id="liftAvgBasketSizeVal">100%&nbsp;</td>
+		  				<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  			</tr>
+		  			<tr class="table-primary">
+		  				<td></td>
+		  				<th>Average Basket Value</th>
+		  				<td id="avgBasketVal">$10</td>
+		  				<td style="border-right:none" id="liftAvgBasketVal">100%&nbsp;</td>
+		  				<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  			</tr>
+		  		</tbody>
+		  		<tbody>
+        			<tr class="clickable collapsible" data-toggle="collapse" data-target="#group-of-rows-2" aria-expanded="false" aria-controls="group-of-rows-2">
+			            <td class="expand-button"></td>
+						<td>Order Type(Orders)</td>
+						<td>Value</td>
+						<td colspan="2">Lift</td>
+			        </tr>
+			    </tbody>
+    			<tbody id="group-of-rows-2" class="collapse">
+    				<tr class="table-primary">
+						<td></td>
+		  				<th>Third Party</th>
+			  			<td id="O_ThirdPartyVal">$44,763</td>
+			  			<td style="border-right:none" id="liftO_ThirdPartyVal">234%&nbsp;</td>
+			  			<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  			</tr>
+	  				<tr class="table-primary">
+		  				<td></td>
+		  				<th>Online Ordering</th>
+		  				<td id="O_OnlineOrderingVal">$28,129</td>
+		  				<td style="border-right:none" id="liftO_OnlineOrderingVal">391%&nbsp;</td>
+		  				<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  			</tr>
+		  			<tr class="table-primary">
+		  				<td></td>
+		  				<th>Food Panda</th>
+		  				<td id="O_FoodPandaVal">$44</td>
+		  				<td style="border-right:none" id="liftO_FoodPandaVal">25%&nbsp;</td>
+		  				<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  			</tr>
+		  			<tr class="table-primary">
+		  				<td></td>
+		  				<th>Catering</th>
+		  				<td id="O_CateringVal">$163</td>
+		  				<td style="border-right:none" id="liftO_CateringVal">709%&nbsp;</td>
+		  				<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  			</tr>
+		  			<tr class="table-primary">
+		  				<td></td>
+		  				<th>Delivery</th>
+		  				<td id="O_DeliveryVal">$29,149</td>
+		  				<td style="border-right:none" id="liftO_DeliveryVal">2205%&nbsp;</td>
+		  				<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  			</tr>
+		  			<tr class="table-primary">
+		  				<td></td>
+		  				<th>To go</th>
+		  				<td id="O_ToGoVal">$31,417</td>
+		  				<td style="border-right:none" id="liftO_ToGoVal">171%&nbsp;</td>
+		  				<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  			</tr>
+		  			<tr class="table-primary">
+		  				<td></td>
+		  				<th>Eat in</th>
+		  				<td id="O_EatInVal">$239,155</td>
+		  				<td style="border-right:none" id="liftO_EatInVal">156%&nbsp;</td>
+		  				<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  			</tr>
+		  		</tbody>
+		  		<tbody>
+        			<tr class="clickable collapsible" data-toggle="collapse" data-target="#group-of-rows-3" aria-expanded="false" aria-controls="group-of-rows-3">
+			            <td class="expand-button"></td>
+						<td>Order Type(Sales)</td>
+						<td>Value</td>
+						<td colspan="2">Lift</td>
+			        </tr>
+			    </tbody>
+    			<tbody id="group-of-rows-3" class="collapse">
+    				<tr class="table-primary">
+						<td></td>
+		  				<th>Third Party</th>
+		  				<td id="S_ThirdPartyVal">$52,491</td>
+		  				<td style="border-right:none" id="liftS_ThirdPartyVal">168%&nbsp;</td>
+		  				<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  			</tr>
+	  				<tr class="table-primary">
+		  				<td></td>
+		  				<th>Online Ordering</th>
+		  				<td id="S_OnlineOrderingVal">$32,309</td>
+		  				<td style="border-right:none" id="liftS_OnlineOrderingVal">233%&nbsp;</td>
+		  				<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  			</tr>
+		  			<tr class="table-primary">
+		  				<td></td>
+		  				<th>Food Panda</th>
+		  				<td id="S_FoodPandaVal">$87</td>
+		  				<td style="border-right:none" id="liftS_FoodPandaVal">21%&nbsp;</td>
+		  				<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  			</tr>
+		  			<tr class="table-primary">
+		  				<td></td>
+		  				<th>Catering</th>
+		  				<td id="S_CateringVal">$1047</td>
+		  				<td style="border-right:none" id="liftS_CateringVal">189%&nbsp;</td>
+		  				<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  			</tr>
+		  			<tr class="table-primary">
+		  				<td></td>
+		  				<th>Delivery</th>
+		  				<td id="S_DeliveryVal">$27,534</td>
+		  				<td style="border-right:none" id="liftS_DeliveryVal">951%&nbsp;</td>
+		  				<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  			</tr>
+		  			<tr class="table-primary">
+		  				<td></td>
+		  				<th>To go</th>
+		  				<td id="S_ToGoVal">$17,428</td>
+		  				<td style="border-right:none" id="liftS_ToGoVal">95%&nbsp;</td>
+		  				<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  			</tr>
+		  			<tr class="table-primary">
+		  				<td></td>
+		  				<th>Eat in</th>
+		  				<td id="S_EatInVal">$200,084</td>
+		  				<td style="border-right:none" id="liftS_EatInVal">89%&nbsp;</td>
+		  				<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  			</tr>
+		  		</tbody>
+		  		<tbody>
+        			<tr class="clickable collapsible" data-toggle="collapse" data-target="#group-of-rows-4" aria-expanded="false" aria-controls="group-of-rows-4">
+			            <td class="expand-button"></td>
+						<td>Discount &amp; Returns</td>
+						<td>Value</td>
+						<td colspan="2">Lift</td>
+			        </tr>
+			    </tbody>
+    			<tbody id="group-of-rows-4" class="collapse">
+    				<tr class="table-primary">
+						<td></td>
+		  				<th>Number of Discounts</th>
+		  				<td id="noOfDiscVal">107,432</td>
+		  				<td style="border-right:none" id="liftNofDiscVal">132%&nbsp;</td>
+		  				<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  			</tr>
+		  			<tr class="table-primary">
+		  				<td></td>
+		  				<th>Average Discount</th>
+		  				<td id="avgDiscVal">$3</td>
+		  				<td style="border-right:none" id="liftAvgDiscVal">104%&nbsp;</td>
+		  				<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  			</tr>
+		  			<tr class="table-primary">
+		  				<td></td>
+		  				<th>Number of Returns</th>
+		  				<td id="noOfReturnsVal">3,988</td>
+		  				<td style="border-right:none" id="liftNoOfReturnsVal">244%&nbsp;</td>
+		  				<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  			</tr>
+		  			<tr class="table-primary">
+		  				<td></td>
+		  				<th>Sales Lost</th>
+		  				<td id="salesLostVal">$14,275</td>
+		  				<td style="border-right:none" id="liftSalesLostVal">247%&nbsp;</td>
+		  				<td style="border-left:none"><i class="fas fa-arrow-up" style="color:green"></i></td>
+		  			</tr>
+		  		</tbody>
+			</table>
+  		</div>
+  	</div>
+  	<div class="row">
+  		<h6>Products</h6>
+  		<table id="productsTable" class="table table-bordered table-hover table-responsive table-sm">
+  			<thead>
+  				<tr class="thead-dark">
+  					<th rowspan="2">Product Name</th>
+  					<th rowspan="2">Orders</th>
+  					<th rowspan="2">Sales</th>
+  					<th rowspan="2">No of Units</th>
+  					<th rowspan="2">Average Product Price</th>
+  					<th rowspan="2">No of Changes</th>
+  					<th rowspan="2">Minimum Price</th>
+  					<th rowspan="2">Maximum Price</th>
+  					<th rowspan="2">Average Basket Size</th>
+  					<th rowspan="2">Average Basket Value</th>
+  					<th colspan="4">Discounts &amp; Returns</th>
+  					<th colspan="7">Order Type (Orders)</th>
+  					<th colspan="7">Order Type (Sales)</th>
+  				</tr>
+  				<tr class="thead-light" id="subHead">
+  					<td>No of Discounts</td>
+  					<td>Average Discount</td>
+  					<td>No of Returns</td>
+  					<td style="border-right-color:#343a40;">Sales Lost</td>
+  					<td>Third Party</td>
+  					<td>Online Ordering</td>
+  					<td>Food Panda</td>
+  					<td>Catering</td>
+  					<td>Delivery</td>
+  					<td>To go</td>
+  					<td style="border-right-color:#343a40;">Eat In</td>
+  					<td>Third Party</td>
+  					<td>Online Ordering</td>
+  					<td>Food Panda</td>
+  					<td>Catering</td>
+  					<td>Delivery</td>
+  					<td>To go</td>
+  					<td style="border-right-color:#343a40;">Eat In</td>
+  				</tr>
+  			</thead>
+  			<tbody>
+  				<tr>
+  					<td>Chicken Hotdog Horfun</td>
+  					<td>3,389</td>
+  					<td>15,589.4</td>
+  					<td>3389</td>
+  					<td>4.6</td>
+  					<td>1</td>
+  					<td>4.6</td>
+  					<td>4.6</td>
+  					<td>1</td>
+  					<td>4.6</td>
+  					<td>576</td>
+  					<td>3.6952431</td>
+  					<td>13</td>
+  					<td>59.8</td>
+  					<td>43</td>
+  					<td>351</td>
+  					<td>1</td>
+  					<td>12</td>
+  					<td>36</td>
+  					<td>421</td>
+  					<td>2,525</td>
+  					<td>197.8</td>
+  					<td>1,614.6</td>
+  					<td>4.6</td>
+  					<td>55.2</td>
+  					<td>165.6</td>
+  					<td>1,936.6</td>
+  					<td>11,615</td>
+  				</tr>
+  				<tr>
+  					<td>Chicken Hotdog Horfun Large</td>
+  					<td>237</td>
+  					<td>1,410.15</td>
+  					<td>237</td>
+  					<td>5.95</td>
+  					<td>1</td>
+  					<td>5.95</td>
+  					<td>5.95</td>
+  					<td>1</td>
+  					<td>5.95</td>
+  					<td>52</td>
+  					<td>2.3092308</td>
+  					<td>1</td>
+  					<td>5.95</td>
+  					<td>9</td>
+  					<td>30</td>
+  					<td>0</td>
+  					<td>0</td>
+  					<td>5</td>
+  					<td>33</td>
+  					<td>160</td>
+  					<td>53.55</td>
+  					<td>178.5</td>
+  					<td>0</td>
+  					<td>0</td>
+  					<td>29.75</td>
+  					<td>196.35</td>
+  					<td>952</td>
+  				</tr>
+  				<tr>
+  					<td>Chicken Hotdog Mee</td>
+  					<td>1,485</td>
+  					<td>6,831</td>
+  					<td>1,485</td>
+  					<td>4.6</td>
+  					<td>1</td>
+  					<td>4.6</td>
+  					<td>4.6</td>
+  					<td>1</td>
+  					<td>4.6</td>
+  					<td>238</td>
+  					<td>2.604916</td>
+  					<td>3</td>
+  					<td>13.8</td>
+  					<td>30</td>
+  					<td>152</td>
+  					<td>0</td>
+  					<td>1</td>
+  					<td>39</td>
+  					<td>152</td>
+  					<td>1,111</td>
+  					<td>138</td>
+  					<td>699.2</td>
+  					<td>0</td>
+  					<td>4.6</td>
+  					<td>179.4</td>
+  					<td>699.2</td>
+  					<td>511.06</td>
+  				</tr>
+  				<tr>
+  					<td>Chicken Hotdog Mee Large</td>
+  					<td>124</td>
+  					<td>737.8</td>
+  					<td>124</td>
+  					<td>5.95</td>
+  					<td>1</td>
+  					<td>5.95</td>
+  					<td>5.95</td>
+  					<td>1</td>
+  					<td>5.95</td>
+  					<td>17</td>
+  					<td>2.9435294</td>
+  					<td>1</td>
+  					<td>5.95</td>
+  					<td>6</td>
+  					<td>14</td>
+  					<td>0</td>
+  					<td>0</td>
+  					<td>8</td>
+  					<td>18</td>
+  					<td>78</td>
+  					<td>35.7</td>
+  					<td>83.3</td>
+  					<td>0</td>
+  					<td>0</td>
+  					<td>47.6</td>
+  					<td>107.1</td>
+  					<td>464.1</td>
+  				</tr>
+  			</tbody>
+  		</table>
+  	</div>
+</div>
+</body>
+</html>

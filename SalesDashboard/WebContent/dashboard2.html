@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+	<title>Stores Comparison</title>
+	
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+	
+  	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+  	
+  	<script src="https://code.highcharts.com/highcharts.js"></script>
+	<script src="https://code.highcharts.com/modules/series-label.js"></script>
+	<script src="https://code.highcharts.com/modules/export-data.js"></script>
+	<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+
+  	<style>
+  	#kpiTable1, #kpiTable2, #productsTable1, #productsTable2
+  	{
+  		width: 400px;
+  	}
+  	#chart1, #chart2
+  	{
+  		height: 300px;
+  	}
+  	</style>
+  	<script>
+  	function fnDrawCharts()
+  	{
+  		setTimeout(function()
+  		{
+  			fnDrawChart1()
+  		},100);
+  		setTimeout(function()
+		{
+  			fnDrawChart2()
+  		},100);
+  		
+  	}
+  	function fnDrawChart1()
+  	{
+  		Highcharts.chart('chart1', 
+  		{
+  			chart: 
+  			{
+  		        zoomType: 'xy'
+  		    },
+  		    title: 
+  		    {
+  		        text: null
+  		    },
+  		    xAxis: 
+  		    {
+  		        categories: ['43101', '43132', '43160', '43191', '43221', '43252', '43282', '43313', '43344', '43374', '43405', '43435', '43466', '43497', '43525', '43556', '43586', '43617', '43647']
+  		    },
+  		  	yAxis: 
+    		[{ // Primary yAxis
+    			gridLineWidth: 0,
+    		    title: 
+    		    {
+    		    	text: 'Sales per Order',
+    		        style: 
+    		        {
+    		        	color: Highcharts.getOptions().colors[2]
+    				}
+    			},
+    		    labels: 
+    		    {
+    				format: '{value}',
+    		        style: 
+    		        {
+    		        	color: Highcharts.getOptions().colors[2]
+    				}
+    			},
+    			min: 0,
+    			max: 12,
+    		    opposite: true
+    		}, 
+    		{ // Secondary yAxis
+    			gridLineWidth: 0,
+    		    title: 
+    		    {
+    		    	text: 'Orders',
+    		        style: 
+    		        {
+    		        	color: Highcharts.getOptions().colors[0]
+    				}
+    			},
+    		    labels: 
+    		    {
+    				format: '{value}',
+    		        style: 
+    		        {
+    		        	color: Highcharts.getOptions().colors[0]
+    				}
+    			}
+			}, 
+    		{ // Tertiary yAxis
+    			gridLineWidth: 0,
+    		    title: 
+    		    {
+    		    	text: 'Sales',
+    		        style: 
+    		        {
+    		        	color: Highcharts.getOptions().colors[1]
+    				}
+    			},
+    		    labels: 
+    		    {
+    		    	format: '$ {value}',
+    		        style: 
+    		        {
+    		        	color: Highcharts.getOptions().colors[1]
+    				}
+    			},
+    		    opposite: true
+    		}],
+    		tooltip: 
+  		    {
+  		        shared: true
+  		    },
+  		    legend: 
+  		    {
+  		        enabled: false
+  		    },
+  		    credits:
+  		    {
+  		    	enabled: false
+  		    },
+  		    series: 
+  		    [{
+  		        type: 'column',
+  		        name: 'Orders',
+  		        yAxis: 1,
+  		        data: [7577, 7028, 8077, 7344, 7736, 7312, 7791, 7955, 7082, 7372, 7363, 7895, 8382, 6625, 7644, 6923, 6707, 7472, 8258],
+  		  		tooltip: 
+  		  		{
+	            	valueSuffix: ' '
+	        	}
+  		    }, 
+  		    {
+  		        type: 'column',
+  		        name: 'Sales',
+  		        yAxis: 2,
+  		        data: [77138, 70461, 78364, 72430, 75751, 75287, 74057, 68378, 68911, 73152, 83162, 75729, 65381, 73236, 68152, 63962, 66333, 67835],
+  		  		marker: 
+	        	{
+  		            enabled: false
+  		        }
+  		    },
+  		    {
+  		        type: 'spline',
+  		        name: 'Sales per Order',
+  		        data: [10.18, 10.02, 9.7, 9.86, 9.79, 9.46, 9.66, 9.3, 9.65, 9.34, 9.93, 10.53, 9.03, 9.86, 9.58, 9.84, 9.53, 8.87, 8.21],
+  		        //data: ["10.18", "10.02", "9.7", "9.86", "9.79", "9.46", "9.66", "9.3", "9.65", "9.34", "9.93", "10.53", "9.03", "9.86", "9.58", "9.84", "9.53", "8.87", "8.21"],
+  		        marker: 
+  		        {
+  		            lineWidth: 2,
+  		            lineColor: Highcharts.getOptions().colors[3],
+  		            fillColor: 'white'
+  		        }
+  		    }],
+  		  	responsive: 
+  		  	{
+  	        	rules: 
+  	        	[{
+  	            	chartOptions: 
+  	            	{
+  	                	yAxis: 
+  	                	[{
+  	                    	labels: 
+  	                    	{
+  	                        	align: 'right',
+  	                        	x: 0,
+  	                        	y: -6
+  	                    	},
+  	                    	showLastLabel: true
+  	                	}, 
+  	                	{
+  	                    	labels: 
+  	                    	{
+  	                        	align: 'left',
+  	                        	x: 0,
+  	                        	y: -6
+  	                    	},
+  	                    	showLastLabel: true
+  	                	}, 
+  	                	{
+  	                    	visible: true
+  	                	}]
+  	            	}
+  	        	}]
+  	    	}
+  		});
+  	}
+  	function fnDrawChart2()
+  	{
+  		Highcharts.chart('chart2', 
+  		{
+  			chart: 
+  		  	{
+  		  		zoomType: 'xy'
+  		  	},
+  		  	title: 
+  		  	{
+  		  		text: null
+  		  	},
+  		  	xAxis: 
+  		  	{
+  		  		categories: ['43101', '43132', '43160', '43191', '43221', '43252', '43282', '43313', '43344', '43374', '43405', '43435', '43466', '43497', '43525', '43556', '43586', '43617', '43647']
+  		  	},
+  		  	yAxis: 
+  		    [{ // Primary yAxis
+  		    	gridLineWidth: 0,
+  		    	title: 
+  		    	{
+  		    		text: 'Sales per Order',
+  		    		style: 
+  		    		{
+  		    			color: Highcharts.getOptions().colors[2]
+  		    		}
+  		    	},
+  		    	labels: 
+  		    	{
+  		    		format: '{value}',
+  		    		style: 
+  		    		{
+  		    			color: Highcharts.getOptions().colors[2]
+  		    		}
+  		    	},
+  		    	min: 0,
+  		    	max: 12,
+  		    	opposite: true
+  		    }, 
+  		    { // Secondary yAxis
+  		    	gridLineWidth: 0,
+  		    	title: 
+  		    	{
+  		    		text: 'Orders',
+  		    		style: 
+  		    		{
+  		    			color: Highcharts.getOptions().colors[0]
+  		    		}
+  		    	},
+  		    	labels: 
+  		    	{
+  		    		format: '{value}',
+  		    		style: 
+  		    		{
+  		    			color: Highcharts.getOptions().colors[0]
+  		    		}
+  		    	}
+  			}, 
+  		    { // Tertiary yAxis
+  		    	gridLineWidth: 0,
+  		    	title: 
+  		    	{
+  		    		text: 'Sales',
+  		    		style: 
+  		    		{
+  		    			color: Highcharts.getOptions().colors[1]
+  		    		}
+  		    	},
+  		    	labels: 
+  		    	{
+  		    		format: '$ {value}',
+  		    		style: 
+  		    		{
+  		    			color: Highcharts.getOptions().colors[1]
+  		    		}
+  		    	},
+  		    	opposite: true
+  		    }],
+  		    tooltip: 
+  		  	{
+  		  		shared: true
+  		  	},
+  		  	legend: 
+  		  	{
+  		  		enabled: false
+  		  	},
+  		  	credits:
+  		  	{
+  		  		enabled: false
+  		  	},
+  		  	series: 
+  		  	[{
+  		  		type: 'column',
+  		  		name: 'Orders',
+  		  		yAxis: 1,
+  		  		data: [10458, 10214, 10756, 11404, 11246, 9797, 11389, 12391, 11244, 11895, 12270, 13649, 12505, 11473, 12185, 11485, 10698, 11365, 12493],
+  		  		tooltip: 
+  		  		{
+  			    	valueSuffix: ' '
+  			    }
+  		  	}, 
+  		  	{
+  		  		type: 'column',
+  		  		name: 'Sales',
+  		  		yAxis: 2,
+  		  		data: [104509, 102930, 109037, 113142, 113632, 100520, 110413, 119305, 114145, 116662, 127100, 151689, 123010, 119040, 126427, 116021, 120922, 121911],
+  		  		marker: 
+  			    {
+  		  			enabled: false
+  		  		}
+  		  	},
+  		  	{
+  		  		type: 'spline',
+  		  		name: 'Sales per Order',
+  		  		data: [9.99, 10.07, 10.13, 9.92, 10.1, 10.26, 9.69, 9.62, 10.15, 9.8, 10.35, 11.11, 9.83, 10.37, 10.37, 10.57, 10.84, 10.63, 9.75],
+  		  		//data: ["10.18", "10.02", "9.7", "9.86", "9.79", "9.46", "9.66", "9.3", "9.65", "9.34", "9.93", "10.53", "9.03", "9.86", "9.58", "9.84", "9.53", "8.87", "8.21"],
+  		  		marker: 
+  		  		{
+  		  			lineWidth: 2,
+  		  		    lineColor: Highcharts.getOptions().colors[3],
+  		  		    fillColor: 'white'
+  		  		}
+  		  	}],
+  		  	responsive: 
+  		  	{
+  		  		rules: 
+  		  	    [{
+  		  	    	chartOptions: 
+  		  	    	{
+  		  	        	yAxis: 
+  		  	            [{
+  		  	            	labels: 
+  		  	                {
+  		  	                	align: 'right',
+  		  	                    x: 0,
+  		  	                    y: -6
+							},
+  		  	                showLastLabel: true
+						}, 
+  		  	            {
+  		  	            	labels: 
+  		  	            	{
+  		  	                	align: 'left',
+  		  					 	x: 0,
+  		  	                    y: -6
+  		  					},
+  		  	                showLastLabel: true
+  		  				}, 
+  		  	            {
+  		  	            	visible: true
+  		  	            }]
+  		  			}
+  		  		}]
+  		  	}
+		});
+	}
+  	</script>
+</head>
+<body onload="fnDrawCharts()">
+	<div class="container-fluid">
+		<h5>Store Comparison</h5>
+		<div class="row">
+			<div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6" style="text-align:center">
+				<label for="store">Store:</label>
+		    	<select id="store" name="store" onchange="fnUpdateData1()">
+					<option>All</option>
+					<option selected>Store 1</option>
+					<option>Store 2</option>
+					<option>Store 3</option>
+					<option>Store 4</option>
+				</select>
+			</div>
+			<div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6" style="text-align:center">
+				<label for="store">Store:</label>
+			    <select id="store" name="store" onchange="fnUpdateData1()">
+					<option>Best in Class</option>
+					<option>Worst in Class</option>
+				</select>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6" style="text-align:center">
+				<label for="period">Period:</label>
+			    <select id="period" name="period" onchange="fnUpdateData3()">
+					<option>Yearly</option>
+					<option selected>Monthly</option>
+					<option>Daily</option>
+					<option>Hourly</option>
+				</select>
+			</div>
+			<div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6" style="text-align:center">
+				<label for="period">Period:</label>
+			    <select id="period" name="period" onchange="fnUpdateData3()">
+					<option>Yearly</option>
+					<option selected>Monthly</option>
+					<option>Daily</option>
+					<option>Hourly</option>
+				</select>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6" style="text-align:-webkit-center;">
+				<table class="table table-bordered table-hovered table-sm" id="kpiTable1">
+					<thead class="thead-dark">
+						<tr>
+							<th>KPI</th>
+							<th>Value</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<th>Orders</th>
+							<td>142,543</td>
+						</tr>
+						<tr>
+							<th>Sales</th>
+							<td>$1,366,911.74</td>
+						</tr>
+						<tr>
+							<th>Sales per Order</th>
+							<td>$9.59</td>
+						</tr>
+						<tr>
+							<th>Average Discount</th>
+							<td>$2.96</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6" style="text-align:-webkit-center;">
+				<table class="table table-bordered table-hovered table-sm" id="kpiTable2">
+					<thead class="thead-dark">
+						<tr>
+							<th>KPI</th>
+							<th>Value</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<th>Orders</th>
+							<td>218,917</td>
+						</tr>
+						<tr>
+							<th>Sales</th>
+							<td>$2,231,822.34</td>
+						</tr>
+						<tr>
+							<th>Sales per Order</th>
+							<td>$10.19</td>
+						</tr>
+						<tr>
+							<th>Average Discount</th>
+							<td>$2.53</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6" id="chart1"></div>
+			<div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6" id="chart2"></div>
+		</div>
+		<div class="row">
+			<div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6" style="text-align:-webkit-center;">
+				<table class="table table-bordered table-hovered table-sm" id="productsTable1">
+					<thead class="thead-dark">
+						<tr>
+							<th>Products</th>
+							<th>Orders</th>
+							<th>Sales</th>
+							<th>No of Units</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Flexi Drink (TU)</td>
+							<td>1958</td>
+							<td>2182.6</td>
+							<td>2114</td>
+						</tr>
+						<tr>
+							<td>Chili Bread</td>
+							<td>1609</td>
+							<td>2046.2</td>
+							<td>1610</td>
+						</tr>
+						<tr>
+							<td>Prawn Mee Horfun</td>
+							<td>293</td>
+							<td>1640.8</td>
+							<td>293</td>
+						</tr>
+						<tr>
+							<td>Ham (mod)</td>
+							<td>958</td>
+							<td>1632.35</td>
+							<td>994</td>
+						</tr>
+						<tr>
+							<td>Bread Sticks</td>
+							<td>562</td>
+							<td>1424.75</td>
+							<td>563</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6" style="text-align:-webkit-center;">
+				<table class="table table-bordered table-hovered table-sm" id="productsTable2">
+					<thead class="thead-dark">
+						<tr>
+							<th>Products</th>
+							<th>Orders</th>
+							<th>Sales</th>
+							<th>No of Units</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Bread Sticks</td>
+							<td>1396</td>
+							<td>3785.2</td>
+							<td>1403</td>
+						</tr>
+						<tr>
+							<td>Ham (mod)</td>
+							<td>1608</td>
+							<td>3250.7</td>
+							<td>1655</td>
+						</tr>
+						<tr>
+							<td>Prawn Mee Horfun</td>
+							<td>555</td>
+							<td>3108</td>
+							<td>555</td>
+						</tr>
+						<tr>
+							<td>Honey Chili Chicken</td>
+							<td>1130</td>
+							<td>291.75</td>
+							<td>1140</td>
+						</tr>
+						<tr>
+							<td>Chili Bread</td>
+							<td>2225</td>
+							<td>2848.3</td>
+							<td>2226</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

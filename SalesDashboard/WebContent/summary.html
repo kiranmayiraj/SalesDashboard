@@ -34,7 +34,7 @@
 			var period = $("#period").val();
 			$.ajax(
 			{
-				url: "SummaryData1",
+				url: "SummaryData2",
 				type: "GET",
 				data: 
 				{
@@ -198,7 +198,9 @@
 </head>
 <body onload="fnDrawChart()">
 <div class="container-fluid">
-	<h4>Sales Dashboard</h4>
+	<br/>
+	<div align="center"><h4>Sales Dashboard</h4></div>
+	<br/>
 	<div class="row">
 		<div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
 			<label for="store">Store:</label>
@@ -267,7 +269,7 @@
   					<tr>
   						<th>Lift</th>
   						<td style="border-right:none" id="liftOrdersVal">187%&nbsp;</td>
-  						<td style="border-right:none" id="liftSalessVal">187%&nbsp;</td>
+  						<td style="border-right:none" id="liftSalesVal">187%&nbsp;</td>
   						<td style="border-right:none" id="liftProductsVal">193%&nbsp;</td>
   						<td style="border-right:none" id="liftAvgProductPriceVal">97%&nbsp;</td>
   						<td style="border-right:none" id="liftNoOfChangeInPriceVal">161%&nbsp;</td>

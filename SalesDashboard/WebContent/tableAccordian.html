@@ -16,9 +16,13 @@
 	<script src="https://code.highcharts.com/modules/export-data.js"></script>
 	
   	<style>
+  	.row
+  	{
+  		padding: inherit;
+  	}
   	th
   	{
-  	  		vertical-align: middle !important;
+  	  	vertical-align: middle !important;
   	}
   	#subHead td
   	{
@@ -199,7 +203,9 @@
 </head>
 <body onload="fnDrawChart()">
 <div class="container-fluid">
-	<h4>Sales Dashboard</h4>
+	<br/>
+	<div align="center"><h4>Sales Dashboard</h4></div>
+	<br/>
 	<div class="row">
 		<div class="col-2 col-sm-2 col-md-2 col-lg-2 col-xl-2">
 			<label for="store">Store:</label>

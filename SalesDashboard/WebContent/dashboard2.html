@@ -16,15 +16,19 @@
 	<script src="https://code.highcharts.com/modules/series-label.js"></script>
 	<script src="https://code.highcharts.com/modules/export-data.js"></script>
 	<script src="https://code.highcharts.com/modules/accessibility.js"></script>
-
   	<style>
+  	.row
+  	{
+  		padding: inherit;
+  	}
   	#kpiTable1, #kpiTable2, #productsTable1, #productsTable2
   	{
-  		width: 400px;
+  		width: 80%;
   	}
   	#chart1, #chart2
   	{
   		height: 300px;
+  		width: 100%;
   	}
   	</style>
   	<script>
@@ -356,196 +360,218 @@
 </head>
 <body onload="fnDrawCharts()">
 	<div class="container-fluid">
-		<h5>Store Comparison</h5>
+		<br/>
+		<div align="center"><h5>Store Comparison</h5></div>
+		<br/>
 		<div class="row">
-			<div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6" style="text-align:center">
-				<label for="store">Store:</label>
-		    	<select id="store" name="store" onchange="fnUpdateData1()">
-					<option>All</option>
-					<option selected>Store 1</option>
-					<option>Store 2</option>
-					<option>Store 3</option>
-					<option>Store 4</option>
-				</select>
+			<div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6">
+				<div class="row">
+					<div class="col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3">
+						<label for="store">Store</label>
+					</div>
+					<div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6">
+						<select class="form-control inline-block" id="store" name="store" onchange="fnUpdateData1()">
+							<option>All</option>
+							<option selected>Store 1</option>
+							<option>Store 2</option>
+							<option>Store 3</option>
+							<option>Store 4</option>
+						</select>
+					</div>
+				</div>
+				<br/>
+				<div class="row">	
+					<div class="col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3">
+						<label for="period">Period</label>
+					</div>
+					<div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6">
+						<select class="form-control inline-block" id="period" name="period" onchange="fnUpdateData3()">
+							<option>Yearly</option>
+							<option selected>Monthly</option>
+							<option>Daily</option>
+							<option>Hourly</option>
+						</select>
+					</div>
+				</div>
+				<br/>
+				<div class="row">
+					<table class="table table-bordered table-hovered table-sm" id="kpiTable1">
+						<thead class="thead-dark">
+							<tr>
+								<th>KPI</th>
+								<th>Value</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<th>Orders</th>
+								<td>142,543</td>
+							</tr>
+							<tr>
+								<th>Sales</th>
+								<td>$1,366,911.74</td>
+							</tr>
+							<tr>
+								<th>Sales per Order</th>
+								<td>$9.59</td>
+							</tr>
+							<tr>
+								<th>Average Discount</th>
+								<td>$2.96</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="row">
+					<div id="chart1"></div>
+				</div>
+				<div class="row">
+					<table class="table table-bordered table-hovered table-sm" id="productsTable1">
+						<thead class="thead-dark">
+							<tr>
+								<th>Products</th>
+								<th>Orders</th>
+								<th>Sales</th>
+								<th>No of Units</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>Flexi Drink (TU)</td>
+								<td>1958</td>
+								<td>2182.6</td>
+								<td>2114</td>
+							</tr>
+							<tr>
+								<td>Chili Bread</td>
+								<td>1609</td>
+								<td>2046.2</td>
+								<td>1610</td>
+							</tr>
+							<tr>
+								<td>Prawn Mee Horfun</td>
+								<td>293</td>
+								<td>1640.8</td>
+								<td>293</td>
+							</tr>
+							<tr>
+								<td>Ham (mod)</td>
+								<td>958</td>
+								<td>1632.35</td>
+								<td>994</td>
+							</tr>
+							<tr>
+								<td>Bread Sticks</td>
+								<td>562</td>
+								<td>1424.75</td>
+								<td>563</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
 			</div>
-			<div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6" style="text-align:center">
-				<label for="store">Store:</label>
-			    <select id="store" name="store" onchange="fnUpdateData1()">
-					<option>Best in Class</option>
-					<option>Worst in Class</option>
-				</select>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6" style="text-align:center">
-				<label for="period">Period:</label>
-			    <select id="period" name="period" onchange="fnUpdateData3()">
-					<option>Yearly</option>
-					<option selected>Monthly</option>
-					<option>Daily</option>
-					<option>Hourly</option>
-				</select>
-			</div>
-			<div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6" style="text-align:center">
-				<label for="period">Period:</label>
-			    <select id="period" name="period" onchange="fnUpdateData3()">
-					<option>Yearly</option>
-					<option selected>Monthly</option>
-					<option>Daily</option>
-					<option>Hourly</option>
-				</select>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6" style="text-align:-webkit-center;">
-				<table class="table table-bordered table-hovered table-sm" id="kpiTable1">
-					<thead class="thead-dark">
-						<tr>
-							<th>KPI</th>
-							<th>Value</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<th>Orders</th>
-							<td>142,543</td>
-						</tr>
-						<tr>
-							<th>Sales</th>
-							<td>$1,366,911.74</td>
-						</tr>
-						<tr>
-							<th>Sales per Order</th>
-							<td>$9.59</td>
-						</tr>
-						<tr>
-							<th>Average Discount</th>
-							<td>$2.96</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-			<div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6" style="text-align:-webkit-center;">
-				<table class="table table-bordered table-hovered table-sm" id="kpiTable2">
-					<thead class="thead-dark">
-						<tr>
-							<th>KPI</th>
-							<th>Value</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<th>Orders</th>
-							<td>218,917</td>
-						</tr>
-						<tr>
-							<th>Sales</th>
-							<td>$2,231,822.34</td>
-						</tr>
-						<tr>
-							<th>Sales per Order</th>
-							<td>$10.19</td>
-						</tr>
-						<tr>
-							<th>Average Discount</th>
-							<td>$2.53</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6" id="chart1"></div>
-			<div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6" id="chart2"></div>
-		</div>
-		<div class="row">
-			<div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6" style="text-align:-webkit-center;">
-				<table class="table table-bordered table-hovered table-sm" id="productsTable1">
-					<thead class="thead-dark">
-						<tr>
-							<th>Products</th>
-							<th>Orders</th>
-							<th>Sales</th>
-							<th>No of Units</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>Flexi Drink (TU)</td>
-							<td>1958</td>
-							<td>2182.6</td>
-							<td>2114</td>
-						</tr>
-						<tr>
-							<td>Chili Bread</td>
-							<td>1609</td>
-							<td>2046.2</td>
-							<td>1610</td>
-						</tr>
-						<tr>
-							<td>Prawn Mee Horfun</td>
-							<td>293</td>
-							<td>1640.8</td>
-							<td>293</td>
-						</tr>
-						<tr>
-							<td>Ham (mod)</td>
-							<td>958</td>
-							<td>1632.35</td>
-							<td>994</td>
-						</tr>
-						<tr>
-							<td>Bread Sticks</td>
-							<td>562</td>
-							<td>1424.75</td>
-							<td>563</td>
-						</tr>
-					</tbody>
-				</table>
-			</div>
-			<div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6" style="text-align:-webkit-center;">
-				<table class="table table-bordered table-hovered table-sm" id="productsTable2">
-					<thead class="thead-dark">
-						<tr>
-							<th>Products</th>
-							<th>Orders</th>
-							<th>Sales</th>
-							<th>No of Units</th>
-						</tr>
-					</thead>
-					<tbody>
-						<tr>
-							<td>Bread Sticks</td>
-							<td>1396</td>
-							<td>3785.2</td>
-							<td>1403</td>
-						</tr>
-						<tr>
-							<td>Ham (mod)</td>
-							<td>1608</td>
-							<td>3250.7</td>
-							<td>1655</td>
-						</tr>
-						<tr>
-							<td>Prawn Mee Horfun</td>
-							<td>555</td>
-							<td>3108</td>
-							<td>555</td>
-						</tr>
-						<tr>
-							<td>Honey Chili Chicken</td>
-							<td>1130</td>
-							<td>291.75</td>
-							<td>1140</td>
-						</tr>
-						<tr>
-							<td>Chili Bread</td>
-							<td>2225</td>
-							<td>2848.3</td>
-							<td>2226</td>
-						</tr>
-					</tbody>
-				</table>
+			<div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6">
+				<div class="row">
+					<div class="col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3">
+						<label for="store">Store</label>
+					</div>	
+					<div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6">	
+						<select class="form-control inline-block" id="store" name="store" onchange="fnUpdateData1()">
+							<option>Best in Class</option>
+							<option>Worst in Class</option>
+						</select>
+					</div>
+				</div>	
+				<br/>
+				<div class="row">	
+					<div class="col-3 col-sm-3 col-md-3 col-lg-3 col-xl-3">
+						<label for="period">Period</label>
+					</div>	
+					<div class="col-6 col-sm-6 col-md-6 col-lg-6 col-xl-6">	
+						<select class="form-control inline-block" id="period" name="period" onchange="fnUpdateData3()">
+							<option>Yearly</option>
+							<option selected>Monthly</option>
+							<option>Daily</option>
+							<option>Hourly</option>
+						</select>
+					</div>
+				</div>
+				<br/>
+				<div class="row">
+					<table class="table table-bordered table-hovered table-sm" id="kpiTable2">
+						<thead class="thead-dark">
+							<tr>
+								<th>KPI</th>
+								<th>Value</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<th>Orders</th>
+								<td>218,917</td>
+							</tr>
+							<tr>
+								<th>Sales</th>
+								<td>$2,231,822.34</td>
+							</tr>
+							<tr>
+								<th>Sales per Order</th>
+								<td>$10.19</td>
+							</tr>
+							<tr>
+								<th>Average Discount</th>
+								<td>$2.53</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="row">
+					<div id="chart2"></div>
+				</div>
+				<div class="row">
+					<table class="table table-bordered table-hovered table-sm" id="productsTable2">
+						<thead class="thead-dark">
+							<tr>
+								<th>Products</th>
+								<th>Orders</th>
+								<th>Sales</th>
+								<th>No of Units</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>Bread Sticks</td>
+								<td>1396</td>
+								<td>3785.2</td>
+								<td>1403</td>
+							</tr>
+							<tr>
+								<td>Ham (mod)</td>
+								<td>1608</td>
+								<td>3250.7</td>
+								<td>1655</td>
+							</tr>
+							<tr>
+								<td>Prawn Mee Horfun</td>
+								<td>555</td>
+								<td>3108</td>
+								<td>555</td>
+							</tr>
+							<tr>
+								<td>Honey Chili Chicken</td>
+								<td>1130</td>
+								<td>291.75</td>
+								<td>1140</td>
+							</tr>
+							<tr>
+								<td>Chili Bread</td>
+								<td>2225</td>
+								<td>2848.3</td>
+								<td>2226</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
 			</div>
 		</div>
 	</div>

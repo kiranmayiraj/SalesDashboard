@@ -11,12 +11,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-@WebServlet("/SummaryData1")
-public class SummaryData1 extends HttpServlet 
+@WebServlet("/SummaryData2")
+public class SummaryData2 extends HttpServlet 
 {
 	private static final long serialVersionUID = 1L;
     
-    public SummaryData1() 
+    public SummaryData2() 
     {
         super();
     }
@@ -27,7 +27,6 @@ public class SummaryData1 extends HttpServlet
 		int currentDay = dt.getDay();
 		int currentHour = dt.getHours();
 		String period = request.getParameter("period");
-		System.out.println("period:" +period);
 		Connection con = null;
 		ResultSet rs1 = null;
 		ResultSet rs2 = null;
@@ -228,77 +227,66 @@ public class SummaryData1 extends HttpServlet
 				previousSDelivery = rs2.getFloat(25);
 				previousSToGo = rs2.getFloat(26);
 				previousSEatIn = rs2.getFloat(27);
+				
 			}
 			
-			int liftOrders = (currentOrders/previousOrders)*100;
-			int liftSales = (currentSales/previousSales)*100;
-			int liftProducts = (currentProducts/previousProducts)*100;
-			int liftAvgProductPrice = (int) ((currentAvgProductPrice/previousAvgProductPrice)*100);
-			int liftNoOfChangeInPrice = (currentNoOfChangeInPrice/previousNoOfChangeInPrice)*100;
-			int liftMinPrice = 0;
-			
-			if(previousMinPrice==0)
-			{
-				liftMinPrice = 0;
-			}
-			else
-			{
-				liftMinPrice = (currentMinPrice/previousMinPrice)*100;
-			}
-			int liftMaxPrice = (int) ((currentMaxPrice/previousMaxPrice)*100);
-			int liftBasketSize = (currentBasketSize/previousBasketSize)*100;
-			int liftBasketValue = (int) ((currentBasketValue/previousBasketValue)*100);
-			int liftNoOfDisc = (currentNoOfDisc/previousNoOfDisc)*100;
-			int liftAvgDisc = (int) ((currentAvgDisc/previousAvgDisc)*100);
-			int liftNoOfReturns = (currentNoOfReturns/previousNoOfReturns)*100;
-			int liftSalesLost = (int) ((currentSalesLost/previousSalesLost)*100);
-			int liftOThirdParty = (currentOThirdParty/previousOThirdParty)*100;
-			int liftOOnlineOrdering = (currentOOnlineOrdering/previousOOnlineOrdering)*100;
-			System.out.println("COFP: "+currentOFoodPanda + " POFP: "+ previousOFoodPanda);
-			int liftOFoodPanda = (currentOFoodPanda/previousOFoodPanda)*100;
-			int liftOCatering = (int) ((currentOCatering/previousOCatering)*100);
-			int liftODelivery = (currentODelivery/previousODelivery)*100;
-			int liftOToGo = (int) ((currentOToGo/previousOToGo)*100);
-			int liftOEatIn = (currentOEatIn/previousOEatIn)*100;
-			int liftSThirdParty = (int) ((currentSThirdParty/previousSThirdParty)*100);
-			int liftSOnlineOrdering = (int) ((currentSOnlineOrdering/previousSOnlineOrdering)*100);
-			System.out.println("CSFP: "+currentSFoodPanda + " PSFP: "+ previousSFoodPanda);
-			int liftSFoodPanda = (int) ((currentSFoodPanda/previousSFoodPanda)*100);
-			int liftSCatering = (int) ((currentSCatering/previousSCatering)*100);
-			int liftSDelivery = (int) ((currentSDelivery/previousSDelivery)*100);
-			int liftSToGo = (int) ((currentSToGo/previousSToGo)*100);
-			int liftSEatIn = (int) ((currentSEatIn/previousSEatIn)*100);
+			int liftOrders = calculateLift(currentOrders, previousOrders);
+			int liftSales = calculateLift(currentSales, previousSales);
+			int liftProducts = calculateLift(currentProducts, previousProducts);
+			int liftAvgProductPrice = calculateLift(currentAvgProductPrice, previousAvgProductPrice);
+			int liftNoOfChangeInPrice = calculateLift(currentNoOfChangeInPrice, previousNoOfChangeInPrice);
+			int liftMinPrice = calculateLift(currentMinPrice, previousMinPrice);
+			int liftMaxPrice = calculateLift(currentMaxPrice, previousMaxPrice);
+			int liftBasketSize = calculateLift(currentBasketSize, previousBasketSize);
+			int liftBasketValue = calculateLift(currentBasketValue, previousBasketValue);
+			int liftNoOfDisc = calculateLift(currentNoOfDisc, previousNoOfDisc);
+			int liftAvgDisc = calculateLift(currentAvgDisc, previousAvgDisc);
+			int liftNoOfReturns = calculateLift(currentNoOfReturns, previousNoOfReturns);
+			int liftSalesLost = calculateLift(currentSalesLost, previousSalesLost);
+			int liftOThirdParty = calculateLift(currentOThirdParty, previousOThirdParty);
+			int liftOOnlineOrdering = calculateLift(currentOOnlineOrdering, previousOOnlineOrdering);
+			int liftOFoodPanda = calculateLift(currentOFoodPanda, previousOFoodPanda);
+			int liftOCatering = calculateLift(currentOCatering, previousOCatering);
+			int liftODelivery = calculateLift(currentODelivery, previousODelivery);
+			int liftOToGo = calculateLift(currentOToGo, previousOToGo);
+			int liftOEatIn = calculateLift(currentOEatIn, previousOEatIn);
+			int liftSThirdParty = calculateLift(currentSThirdParty, previousSThirdParty);
+			int liftSOnlineOrdering = calculateLift(currentSOnlineOrdering, previousSOnlineOrdering);
+			int liftSFoodPanda = calculateLift(currentSFoodPanda, previousSFoodPanda);
+			int liftSCatering = calculateLift(currentSCatering, previousSCatering);
+			int liftSDelivery = calculateLift(currentSDelivery, previousSDelivery);
+			int liftSToGo = calculateLift(currentSToGo, previousSToGo);
+			int liftSEatIn = calculateLift(currentSEatIn, previousSEatIn);
 			
 			xmlResponse = xmlResponse + "<LiftOrders>" + liftOrders + "%</LiftOrders>";
-			xmlResponse = xmlResponse + "<LiftSales>" + liftSales + "</LiftSales>";
-			xmlResponse = xmlResponse + "<LiftProducts>" + liftProducts + "</LiftProducts>";
-			xmlResponse = xmlResponse + "<LiftAvgProductPrice>" + liftAvgProductPrice + "</LiftAvgProductPrice>";
-			xmlResponse = xmlResponse + "<LiftNoOfChangeInPrice>" + liftNoOfChangeInPrice + "</LiftNoOfChangeInPrice>";
-			xmlResponse = xmlResponse + "<LiftMinPrice>" + liftMinPrice + "</LiftMinPrice>";
-			xmlResponse = xmlResponse + "<LiftMaxPrice>" + liftMaxPrice + "</LiftMaxPrice>";
-			xmlResponse = xmlResponse + "<LiftBasketSize>" + liftBasketSize + "</LiftBasketSize>";
-			xmlResponse = xmlResponse + "<LiftBasketValue>" + liftBasketValue + "</LiftBasketValue>";
-			xmlResponse = xmlResponse + "<LiftNoOfDisc>" + liftNoOfDisc + "</LiftNoOfDisc>";
-			xmlResponse = xmlResponse + "<LiftAvgDisc>" + liftAvgDisc + "</LiftAvgDisc>";
-			xmlResponse = xmlResponse + "<LiftNoOfReturns>" + liftNoOfReturns + "</LiftNoOfReturns>";
-			xmlResponse = xmlResponse + "<LiftSalesLost>" + liftSalesLost + "</LiftSalesLost>";
-			xmlResponse = xmlResponse + "<LiftOThirdParty>" + liftOThirdParty + "</LiftOThirdParty>";
-			xmlResponse = xmlResponse + "<LiftOOnlineOrdering>" + liftOOnlineOrdering + "</LiftOOnlineOrdering>";
-			xmlResponse = xmlResponse + "<LiftOFoodPanda>" + liftOFoodPanda + "</LiftOFoodPanda>";
-			xmlResponse = xmlResponse + "<LiftOCatering>" + liftOCatering + "</LiftOCatering>";
-			xmlResponse = xmlResponse + "<LiftODelivery>" + liftODelivery + "</LiftODelivery>";
-			xmlResponse = xmlResponse + "<LiftOToGo>" + liftOToGo + "</LiftOToGo>";
-			xmlResponse = xmlResponse + "<LiftOEatIn>" + liftOEatIn + "</LiftOEatIn>";
-			xmlResponse = xmlResponse + "<LiftSThirdParty>" + liftSThirdParty + "</LiftSThirdParty>";
-			xmlResponse = xmlResponse + "<LiftSOnlineOrdering>" + liftSOnlineOrdering + "</LiftSOnlineOrdering>";
-			xmlResponse = xmlResponse + "<LiftSFoodPanda>" + liftSFoodPanda + "</LiftSFoodPanda>";
-			xmlResponse = xmlResponse + "<LiftSCatering>" + liftSCatering + "</LiftSCatering>";
-			xmlResponse = xmlResponse + "<LiftSDelivery>" + liftSDelivery + "</LiftSDelivery>";
-			xmlResponse = xmlResponse + "<LiftSToGo>" + liftSToGo + "</LiftSToGo>";
-			xmlResponse = xmlResponse + "<LiftSEatIn>" + liftSEatIn + "</LiftSEatIn>";
+			xmlResponse = xmlResponse + "<LiftSales>" + liftSales + "%</LiftSales>";
+			xmlResponse = xmlResponse + "<LiftProducts>" + liftProducts + "%</LiftProducts>";
+			xmlResponse = xmlResponse + "<LiftAvgProductPrice>" + liftAvgProductPrice + "%</LiftAvgProductPrice>";
+			xmlResponse = xmlResponse + "<LiftNoOfChangeInPrice>" + liftNoOfChangeInPrice + "%</LiftNoOfChangeInPrice>";
+			xmlResponse = xmlResponse + "<LiftMinPrice>" + liftMinPrice + "%</LiftMinPrice>";
+			xmlResponse = xmlResponse + "<LiftMaxPrice>" + liftMaxPrice + "%</LiftMaxPrice>";
+			xmlResponse = xmlResponse + "<LiftBasketSize>" + liftBasketSize + "%</LiftBasketSize>";
+			xmlResponse = xmlResponse + "<LiftBasketValue>" + liftBasketValue + "%</LiftBasketValue>";
+			xmlResponse = xmlResponse + "<LiftNoOfDisc>" + liftNoOfDisc + "%</LiftNoOfDisc>";
+			xmlResponse = xmlResponse + "<LiftAvgDisc>" + liftAvgDisc + "%</LiftAvgDisc>";
+			xmlResponse = xmlResponse + "<LiftNoOfReturns>" + liftNoOfReturns + "%</LiftNoOfReturns>";
+			xmlResponse = xmlResponse + "<LiftSalesLost>" + liftSalesLost + "%</LiftSalesLost>";
+			xmlResponse = xmlResponse + "<LiftOThirdParty>" + liftOThirdParty + "%</LiftOThirdParty>";
+			xmlResponse = xmlResponse + "<LiftOOnlineOrdering>" + liftOOnlineOrdering + "%</LiftOOnlineOrdering>";
+			xmlResponse = xmlResponse + "<LiftOFoodPanda>" + liftOFoodPanda + "%</LiftOFoodPanda>";
+			xmlResponse = xmlResponse + "<LiftOCatering>" + liftOCatering + "%</LiftOCatering>";
+			xmlResponse = xmlResponse + "<LiftODelivery>" + liftODelivery + "%</LiftODelivery>";
+			xmlResponse = xmlResponse + "<LiftOToGo>" + liftOToGo + "%</LiftOToGo>";
+			xmlResponse = xmlResponse + "<LiftOEatIn>" + liftOEatIn + "%</LiftOEatIn>";
+			xmlResponse = xmlResponse + "<LiftSThirdParty>" + liftSThirdParty + "%</LiftSThirdParty>";
+			xmlResponse = xmlResponse + "<LiftSOnlineOrdering>" + liftSOnlineOrdering + "%</LiftSOnlineOrdering>";
+			xmlResponse = xmlResponse + "<LiftSFoodPanda>" + liftSFoodPanda + "%</LiftSFoodPanda>";
+			xmlResponse = xmlResponse + "<LiftSCatering>" + liftSCatering + "%</LiftSCatering>";
+			xmlResponse = xmlResponse + "<LiftSDelivery>" + liftSDelivery + "%</LiftSDelivery>";
+			xmlResponse = xmlResponse + "<LiftSToGo>" + liftSToGo + "%</LiftSToGo>";
+			xmlResponse = xmlResponse + "<LiftSEatIn>" + liftSEatIn + "%</LiftSEatIn>";
 			
 			xmlResponse = xmlResponse + "</Summary>";
-			
 			response.getWriter().append(xmlResponse);
 			con.close();
 		}
@@ -308,5 +296,19 @@ public class SummaryData1 extends HttpServlet
 			e.printStackTrace();
 		}
 	}
-
+	private int calculateLift(float a, float b) 
+	{
+		float lift = 0.0f;
+	    if(b==0)
+	    {
+	    	lift = 0.0f;
+	    }
+	    else
+	    {
+	    	lift = (a/b);
+	    	lift = lift*100;
+	    }
+	    int cLift = (int) lift;
+	    return cLift;
+	}
 }

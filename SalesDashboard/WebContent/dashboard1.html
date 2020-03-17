@@ -16,6 +16,10 @@
 	<script src="https://code.highcharts.com/modules/export-data.js"></script>
 	
   	<style>
+  	.row
+  	{
+  		padding: inherit;
+  	}
   	th
   	{
   		text-align: center;
@@ -35,7 +39,7 @@
 			var period = $("#period").val();
 			$.ajax(
 			{
-				url: "SummaryData",
+				url: "SummaryData2",
 				type: "GET",
 				data: 
 				{
@@ -77,6 +81,33 @@
 			$("#noOfReturnsVal").html("\n" + $(data).find("NoOfReturns").text());
 			$("#salesLostVal").html("\n" + $(data).find("SalesLost").text());
 			
+			$("#liftOrdersVal").html($(data).find("liftOrders").text());
+			$("#liftSalesVal").html("\n" + $(data).find("liftSales").text());
+			$("#liftProductsVal").html("\n" + $(data).find("liftProducts").text());
+			$("#liftAvgProductPriceVal").html("\n" + $(data).find("liftAvgProductPrice").text());
+			$("#liftNoOfChangeInPriceVal").html("\n" + $(data).find("liftNoOfChangeInPrice").text());
+			$("#liftMinPriceVal").html("\n" + $(data).find("liftMinPrice").text());
+			$("#liftMaxPriceVal").html("\n" + $(data).find("liftMaxPrice").text());
+			$("#liftAvgBasketSizeVal").html("\n" + $(data).find("liftBasketSize").text());
+			$("#liftAavgBasketVal").html("\n" + $(data).find("liftBasketValue").text());
+			$("#liftO_ThirdPartyVal").html("\n" + $(data).find("liftOThirdParty").text());
+			$("#liftO_OnlineOrderingVal").html("\n" + $(data).find("liftOOnlineOrdering").text());
+			$("#liftO_FoodPandaVal").html("\n" + $(data).find("liftOFoodPanda").text());
+			$("#liftO_CateringVal").html("\n" + $(data).find("liftOCatering").text());
+			$("#liftO_DeliveryVal").html("\n" + $(data).find("liftODelivery").text());
+			$("#liftO_ToGoVal").html("\n" + $(data).find("liftOToGo").text());
+			$("#liftO_EatInVal").html("\n" + $(data).find("liftOEatIn").text());
+			$("#liftS_ThirdPartyVal").html("\n" + $(data).find("liftSThirdParty").text());
+			$("#liftS_OnlineOrderingVal").html("\n" + $(data).find("liftSOnlineOrdering").text());
+			$("#liftS_FoodPandaVal").html("\n" + $(data).find("liftSFoodPanda").text());
+			$("#liftS_CateringVal").html("\n" + $(data).find("liftSCatering").text());
+			$("#liftS_DeliveryVal").html("\n" + $(data).find("liftSDelivery").text());
+			$("#liftS_ToGoVal").html("\n" + $(data).find("liftSToGo").text());
+			$("#liftS_EatInVal").html("\n" + $(data).find("liftSEatIn").text());
+			$("#liftNoOfDiscVal").html("\n" + $(data).find("liftNoOfDisc").text());
+			$("#liftAvgDiscVal").html("\n" + $(data).find("liftAvgDisc").text());
+			$("#liftNoOfReturnsVal").html("\n" + $(data).find("liftNoOfReturns").text());
+			$("#liftSalesLostVal").html("\n" + $(data).find("liftSalesLost").text());
 		}
 	};
 	</script>
@@ -172,7 +203,9 @@
 </head>
 <body onload="fnDrawChart()">
 <div class="container-fluid">
-	<h4>Sales Dashboard</h4>
+<br/>
+	<div align="center"><h4>Sales Dashboard</h4></div>
+	<br/>
 	<div class="row">
 		<div class="col-4 col-sm-4 col-md-4 col-lg-4 col-xl-4">
 			<label for="store">Store:</label>

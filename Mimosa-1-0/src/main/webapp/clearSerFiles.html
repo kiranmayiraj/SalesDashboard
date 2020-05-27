@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8">
+	<title>Insert title here</title>
+	<script src="js/jquery-3.4.1.min.js"></script>
+	<script type="text/javascript">
+	function fnClearSerFiles()
+	{
+		$.get({
+			url: 'SerFilesDelServlet',
+			data:{},
+			success: function(data)
+			{
+				var delStatus = $(data).find("DelStatus").text();
+				$("#delStatus").html(delStatus);
+				
+			},
+			error: function(error)
+			{
+				$("#delStatus").html("Something went wrong. Please try again.");
+			}
+		
+		})
+	}
+	</script>
+</head>
+<body>
+<div align="center">
+	<form id="csfForm">
+		<input type="button" value = "Clear Serialized Files" onclick = "fnClearSerFiles()">
+		<div id="delStatus" align="center"></div>
+	</form>
+</div>
+</body>
+</html>

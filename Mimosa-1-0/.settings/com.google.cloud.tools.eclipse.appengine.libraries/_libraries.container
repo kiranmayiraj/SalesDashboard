@@ -1,0 +1,9 @@
+[
+  "appengine-api",
+  "objectify",
+  "appengine-endpoints",
+  "stackdriverlogging",
+  "googlecloudstorage",
+  "googlebiqqueryapi",
+  "googlebiqquerydatatransferapi"
+]

@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<link rel="stylesheet" href="bootstrap-4.4.1-dist/css/bootstrap.css">
+	<!-- <link rel="stylesheet" href="bootstrap-4.0.0-dist/css/bootstrap.css"/> -->
+	<link rel="stylesheet" href="fontawesome-free-5.13.0-web/css/all.css"/>
+	
+	<script src = "https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"> </script>
+	<script src="js/jquery-3.4.1.min.js" ></script>
+	<script src="bootstrap-4.0.0-dist/js/bootstrap.js"></script>
+	<!-- <script src="bootstrap-4.4.1-dist/js/bootstrap.js" type="text/javascript"></script> -->
+	
+	<script src = "https://code.highcharts.com/highcharts.js"></script>  
+	<script src="https://code.highcharts.com/modules/networkgraph.js"></script>
+	<script src="https://code.highcharts.com/modules/heatmap.js"></script>
+	
+	<title>Executive Summary</title>	
+	<style>
+	.spinner-purple
+	{
+		color: #7851a1;
+	}
+	.content
+	{
+		height: 100%;
+	}
+	.nav-tabs
+	{
+		background-color: #efefef;
+	}
+	.periodSelector
+	{
+		text-align: center;
+	}
+	.card-deck
+	{
+		margin: 50px;
+	}
+	#summary .card-header
+	{
+		background: #7851a1;
+		color: #FFFFFF;
+	}
+	#newCustomers .card-header
+	{
+		background: #f7931f;
+		color: #FFFFFF;
+	}
+	#rptCustomers .card-header
+	{
+		background: #f7931f;
+		color: #FFFFFF;
+	}
+	#attrition .card-header
+	{
+		background: #7851a1;
+		color: #FFFFFF;
+	}
+	.footer
+	{
+		bottom: 15px;
+		position: fixed;
+		text-align: center;
+		width:100%;
+	}
+	</style>
+<script>
+	function fnLogout()
+	{
+		$("#logoutForm").submit();
+	}
+</script>
+</head>
+
+<body>
+<div class="content container-fluid">
+	<nav class="navbar navbar-expand-sm bg-secondary navbar-dark">
+		<ul class="navbar-nav mr-auto">
+			<li class="nav-item active">
+				<a class="nav-link" href="executiveSummary.html">Executive Summary</a>
+		    </li>
+		    <li class="nav-item">
+				<a class="nav-link" href="overview.html">Overview</a>
+		    </li>
+		    <li class="nav-item">
+				<a class="nav-link" href="customerAnalysis.html">Customer Analysis</a>
+		    </li>
+		    <li class="nav-item">
+				<a class="nav-link" href="productAnalysis.html">Product Analysis</a>
+		    </li>
+		    <li class="nav-item">
+				<a class="nav-link" href="campaignAnalysis.html">Campaign Analysis</a>
+		    </li>
+		</ul>
+		<ul class="navbar-nav">
+		    <li class="nav-item dropdown">
+				<a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					<span class="icon"><i class="fas fa-user"></i></span>
+					<span>Kiranmayi</span>
+				</a>
+	        	<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown" style="margin-top: 12px;">
+	          		<a class="dropdown-item" href="settings.jsp">Change Password</a>
+	          		<a class="dropdown-item" href="#">Manage stores</a>
+	          		<div class="dropdown-divider"></div>
+	          		<form action="LogoutServlet" method="get" id="logoutForm">
+	          			<a class="dropdown-item" onclick="fnLogout()">Log out</a>
+	          		</form>
+	        	</div>
+			</li>
+		</ul>
+	</nav>
+	<div class="tab-content clearfix">
+		<div class="tab-pane active">
+			<form id="exportForm" action="ExportSummary2Excel" method="post">
+				<div class="card-deck">
+					<div class="card" id="summary">
+	  					<h5 class="card-header">Summary</h5>
+	  					<div class="card-body">
+	    					<p class="card-text">
+	    						You made &#8377;<span id="sumSales">374.6K</span> on <span id="sumOrders">17</span> orders after &#8377;<span id="sumDisc">8.4K</span> in discounts from <span id="sumUniqueCust">9</span> unique customers in the last month, with key metrics of &#8377;<span id="sumARPC">41.6K</span> ARPC, &#8377;<span id="sumAOV">22.0K</span> AOV, and &#8377;<span id="sumUPT">1.8</span> UPT.
+	 						</p>
+	   					</div>
+					</div>
+					<div class="card" id="attrition">
+	  					<h5 class="card-header">Attrition</h5>
+	  					<div class="card-body">
+	    					<p class="card-text">
+	    						You had 27 churned users this period (customers or signups who have lapsed > 12 months without orders). Your acquisition to churn rate (ACR) is 0.33, which means you have a "leaky bucket".
+	    					</p>
+	   					</div>
+					</div>
+				</div>
+				<div class="card-deck">
+					<div class="card" id="newCustomers">
+	  					<h5 class="card-header">New Customers</h5>
+	  					<div class="card-body">
+	    					<p class="card-text">
+	    						You had 6 newly activated customers this period. They spent &#8377;249.70K after &#8377;5.6K in discounts for an AOV of &#8377;14.67K.
+	    					</p>
+	   					</div>
+					</div>
+					<div class="card" id="rptCustomers">
+	  					<h5 class="card-header">Repeat Customers</h5>
+	  					<div class="card-body">
+	    					<p class="card-text">
+	    						You had 3 repeat customers this period. They spent &#8377;124.87K after &#8377;2.8K in discounts for an AOV of &#8377;7.3K.
+	    					</p>
+	   					</div>
+					</div>
+				</div>
+				<br/>
+				<div style="text-align:center">
+					<button type="submit" class="btn" style="background-color:#7851a1;color:white;">Export to Excel</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+<footer class="footer navbar-fixed-bottom">
+		<small>&copy;2020 Devise Math Solutions. &nbsp;&nbsp; All Rights Reserved.</small>
+</footer>
+</body>
+</html>

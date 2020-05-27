@@ -1,0 +1,2052 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+	<!-- <link rel="stylesheet" href="bootstrap-4.0.0-dist/css/bootstrap.css"/> -->
+	<link rel="stylesheet" href="bootstrap-4.4.1-dist/css/bootstrap.css">
+	<link rel="stylesheet" href="fontawesome-free-5.13.0-web/css/all.css"/>
+	
+	<script src = "https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"> </script>
+	<script src="js/jquery-3.4.1.min.js" ></script>
+	<script src="bootstrap-4.0.0-dist/js/bootstrap.js"></script>
+	
+	<script src = "https://code.highcharts.com/highcharts.js"></script>  
+	<script src="https://code.highcharts.com/maps/modules/map.js"></script>
+	<script src="https://code.highcharts.com/mapdata/custom/europe.js"></script>
+	
+	<title>Overview</title>	
+	<style>
+	.spinner-purple
+	{
+		color: #7851a1;
+	}
+	body
+	{
+		overflow-x: hidden;
+		text-align: center;
+	}
+	.content
+	{
+		height: 100%;
+	}
+	.nav-tabs
+	{
+		background-color: #efefef;
+	}
+	#rpKpiStatusMessage, #rpTblDivStatusMessage, #rpChart3StatusMessage, #rpChart4StatusMessage, #rpChart5StatusMessage
+	{
+		color: red;
+	}
+	.cardKpis .card
+	{
+		border: 1px solid #7851a1;
+		height: 100px;
+	}
+	.cardKpis .card-text i
+	{
+		font-size: 20px;
+    	color: #f7931f;
+	}
+	.cardBody
+	{
+		min-height: 90px !important;
+    	margin-top: 10%;
+    	text-align: center;
+	}
+	.table
+	{
+		vertical-align: middle;
+	    font-size: small;
+	    box-shadow: 3px 3px 15px 0px rgba(0,0,0,0.15);
+		width: fit-content;
+	}
+	#regionPerTbl
+	{
+		box-shadow: 3px 3px 15px 0px rgba(0,0,0,0.15); 
+		font-size: small;
+	    max-height: 490px;
+	    text-align: center;
+	    width: fit-content;
+	    min-height: fit-content;
+	}
+	#regionPerTbl thead th
+	{
+		background: #DEDEDE;
+		position: sticky;
+		top: -2px;
+	}
+	#regionPerTbl tbody
+	{
+		height: 730px !important;
+		max-height: 730px !important;
+		overflow-y: scroll;
+		width: fit-content;
+	}
+	.scrolling-wrapper-flexbox
+	{
+		display: flex;
+	    flex-wrap: nowrap;
+	    overflow-x: auto;
+	}
+	#productImgsDeck .card
+	{
+		flex: 0 0 auto;
+		min-width: 175px;
+		max-width: 175px;
+	    margin: 5px;
+	}
+	.img-fluid
+	{
+		height: 275px;
+	}
+	.transbox
+	{
+		background-color: #f8f9fa;
+		opacity: 0.6;
+	}
+	.transbox p 
+	{
+		font-weight: bold;
+		color: #000000;
+	}
+	#dropDown
+	{
+		width: 150px;
+	}
+	.graph
+	{
+		width: 500px;
+	}
+	.footer
+	{
+		margin-bottom: 15px;
+		position: inherit;
+		text-align: center;
+		width:100%;
+	}
+	</style>
+<script>
+	function fnLogout()
+	{
+		$("#logoutForm").submit();
+	}
+	$(document).ready(function()
+	{
+		$("#tableSearch").on("keyup", function() 
+		{
+			var value = $(this).val().toLowerCase();
+		    $("#myTable tr").filter(function() 
+		    {
+		    	$(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+		    });
+		});
+	});
+	function fnLoadOverviewData(o)
+	{
+		$("#kpiSpinner").html("<div class='spinner-border spinner-border-sm spinner-purple'></div>");
+		var period1 = $("#period1").val();
+		$.post(
+		{
+			url: "OverviewServlet",
+			data: 
+			{
+				period1: period1
+			},
+			cache: true,
+			success: function(data)
+			{
+				fnPopulateOverviewData(data);
+				$("#kpiSpinner").html("");
+			}
+		});
+	}
+	function fnPopulateOverviewData(data)
+	{
+		var kpi = $(data).find("Kpi");
+		var sales = $(kpi).find("Sales").text();
+		var salesInDc = $(kpi).find("SalesInDc").text();
+		var orders = $(kpi).find("Orders").text();
+		var ordersInDc = $(kpi).find("OrdersInDc").text();
+		var AOV = $(kpi).find("AverageOrderValue").text();
+		var AOVInDc = $(kpi).find("AOVInDc").text();
+		var IO = $(kpi).find("ItemOrdered").text();
+		var IOInDc = $(kpi).find("IOInDc").text();
+		var shipping = $(kpi).find("Shipping").text();
+		var shipInDc = $(kpi).find("ShipInDc").text();
+		var discount = $(kpi).find("Discount").text();
+		var discInDc = $(kpi).find("DiscInDc").text();
+		var newCustomer = $(kpi).find("NewCustomer").text();
+		var newCustomerInDc = $(kpi).find("NewCustomerInDc").text();
+		var repeatCustomer = $(kpi).find("RepeatCustomer").text();
+		var repeatCustomerInDc = $(kpi).find("RepeatCustomerInDc").text();
+		var returnOrder = $(kpi).find("ReturnOrder").text();
+		var returnOrderInDc = $(kpi).find("ReturnOrderInDc").text();
+		//var repeatOrder = $(kpi).find("RepeatOrder").text();
+		//var repeatOrderInDc = $(kpi).find("RepeatOrderInDc").text();
+		var repeatOrderValue = $(kpi).find("RepeatOrderValue").text();
+		var ROVInDc = $(kpi).find("ROVInDc").text();
+		var ARPC = $(kpi).find("ARPC").text();
+		var ARPCInDc = $(kpi).find("ARPCInDc").text();
+		var UPT = $(kpi).find("UPT").text();
+		var UPTInDc = $(kpi).find("UPTInDc").text();
+		
+		$("#Sales").html(sales);
+		$("#Sales_InDc").html(salesInDc);
+		$("#Orders").html(orders);
+		$("#Orders_InDc").html(ordersInDc);
+		$("#Average_order_value").html(AOV);
+		$("#AOV_InDc").html(AOVInDc);
+		$("#Item_Ordered").html(IO);
+		$("#IO_InDc").html(IOInDc);
+		$("#Shipping").html(shipping);
+		$("#Ship_InDc").html(shipInDc);
+		$("#Discount").html(discount);
+		$("#Disc_InDc").html(discInDc);
+		
+		$("#New_Customer").html(newCustomer);
+		$("#New_Customer_InDc").html(newCustomerInDc);
+		$("#Repeat_Customer").html(repeatCustomer);
+		$("#Repeat_Customer_InDc").html(repeatCustomerInDc);
+		$("#Return_Order").html(returnOrder);
+		$("#Return_Order_InDc").html(returnOrderInDc);
+		//$("#Repeat_Order").html(repeatOrder);
+		//$("#Repeat_Order_InDc").html(repeatOrderInDc);
+		$("#Repeat_Order_Value").html(repeatOrderValue);
+		$("#ROV_InDc").html(ROVInDc);
+		$("#ARPC").html(ARPC);
+		$("#ARPC_InDc").html(ARPCInDc);
+		$("#UPT").html(UPT);
+		$("#UPT_InDc").html(UPTInDc);
+
+		if(salesInDc > 0)
+		{
+			var temp = $("#Sales_InDc").parent().siblings("i");
+			$(temp).attr("class","fa fa-caret-up");
+			$(temp).css("color","green");
+			$(temp).css("font-size","30px");
+		}
+		else if(salesInDc < 0)
+		{
+			var temp = $("#Sales_InDc").parent().siblings("i");
+			$(temp).attr("class","fa fa-caret-down");
+			$(temp).css("color","red");	
+			$(temp).css("font-size","30px");	
+		}
+		else
+		{
+			var temp = $("#Sales_InDc").parent().siblings("i");
+			$(temp).attr("class","fas fa-equals");
+			$(temp).css("color","#0693f7");	
+			$(temp).css("font-size","20px");	
+		}
+		if(ordersInDc > 0)
+		{
+			var temp = $("#Orders_InDc").parent().siblings("i");
+			$(temp).attr("class","fa fa-caret-up");
+			$(temp).css("color","green");
+			$(temp).css("font-size","30px");
+		}
+		else if(ordersInDc < 0)
+		{
+			var temp = $("#Orders_InDc").parent().siblings("i");
+			$(temp).attr("class","fa fa-caret-down");
+			$(temp).css("color","red");	
+			$(temp).css("font-size","30px");	
+		}
+		else
+		{
+			var temp = $("#Orders_InDc").parent().siblings("i");
+			$(temp).attr("class","fas fa-equals");
+			$(temp).css("color","#0693f7");	
+			$(temp).css("font-size","20px");	
+		}
+		if(AOVInDc > 0)
+		{
+			var temp = $("#AOV_InDc").parent().siblings("i");
+			$(temp).attr("class","fa fa-caret-up");
+			$(temp).css("color","green");
+			$(temp).css("font-size","30px");
+		}
+		else if(AOVInDc < 0)
+		{
+			var temp = $("#AOV_InDc").parent().siblings("i");
+			$(temp).attr("class","fa fa-caret-down");
+			$(temp).css("color","red");	
+			$(temp).css("font-size","30px");	
+		}
+		else
+		{
+			var temp = $("#AOV_InDc").parent().siblings("i");
+			$(temp).attr("class","fas fa-equals");
+			$(temp).css("color","#0693f7");	
+			$(temp).css("font-size","20px");	
+		}
+		if(IOInDc > 0)
+		{
+			var temp = $("#IO_InDc").parent().siblings("i");
+			$(temp).attr("class","fa fa-caret-up");
+			$(temp).css("color","green");
+			$(temp).css("font-size","30px");
+		}
+		else if(IOInDc < 0)
+		{
+			var temp = $("#IO_InDc").parent().siblings("i");
+			$(temp).attr("class","fa fa-caret-down");
+			$(temp).css("color","red");	
+			$(temp).css("font-size","30px");	
+		}
+		else
+		{
+			var temp = $("#IO_InDc").parent().siblings("i");
+			$(temp).attr("class","fas fa-equals");
+			$(temp).css("color","#0693f7");	
+			$(temp).css("font-size","20px");	
+		}
+		if(shipInDc > 0)
+		{
+			var temp = $("#Ship_InDc").parent().siblings("i");
+			$(temp).attr("class","fa fa-caret-up");
+			$(temp).css("color","green");
+			$(temp).css("font-size","30px");
+		}
+		else if(shipInDc < 0)
+		{
+			var temp = $("#Ship_InDc").parent().siblings("i");
+			$(temp).attr("class","fa fa-caret-down");
+			$(temp).css("color","red");	
+			$(temp).css("font-size","30px");	
+		}
+		else
+		{
+			var temp = $("#Ship_InDc").parent().siblings("i");
+			$(temp).attr("class","fas fa-equals");
+			$(temp).css("color","#0693f7");
+			$(temp).css("font-size","20px");		
+		}
+		if(discInDc > 0)
+		{
+			var temp = $("#Disc_InDc").parent().siblings("i");
+			$(temp).attr("class","fa fa-caret-up");
+			$(temp).css("color","green");
+			$(temp).css("font-size","30px");
+		}
+		else if(discInDc < 0)
+		{
+			var temp = $("#Disc_InDc").parent().siblings("i");
+			$(temp).attr("class","fa fa-caret-down");
+			$(temp).css("color","red");	
+			$(temp).css("font-size","30px");	
+		}
+		else
+		{
+			var temp = $("#Disc_InDc").parent().siblings("i");
+			$(temp).attr("class","fas fa-equals");
+			$(temp).css("color","#0693f7");	
+			$(temp).css("font-size","20px");	
+		}
+		if(newCustomerInDc > 0)
+		{
+			var temp = $("#New_Customer_InDc").parent().siblings("i");
+			$(temp).attr("class","fa fa-caret-up");
+			$(temp).css("color","green");
+			$(temp).css("font-size","30px");
+		}
+		else if(newCustomerInDc < 0)
+		{
+			var temp = $("#New_Customer_InDc").parent().siblings("i");
+			$(temp).attr("class","fa fa-caret-down");
+			$(temp).css("color","red");	
+			$(temp).css("font-size","30px");	
+		}
+		else
+		{
+			var temp = $("#New_Customer_InDc").parent().siblings("i");
+			$(temp).attr("class","fas fa-equals");
+			$(temp).css("color","#0693f7");	
+			$(temp).css("font-size","20px");	
+		}
+		if(repeatCustomerInDc > 0)
+		{
+			var temp = $("#Repeat_Customer_InDc").parent().siblings("i");
+			$(temp).attr("class","fa fa-caret-up");
+			$(temp).css("color","green");
+			$(temp).css("font-size","30px");
+		}
+		else if(repeatCustomerInDc < 0)
+		{
+			var temp = $("#Repeat_Customer_InDc").parent().siblings("i");
+			$(temp).attr("class","fa fa-caret-down");
+			$(temp).css("color","red");	
+			$(temp).css("font-size","30px");	
+		}
+		else
+		{
+			var temp = $("#Repeat_Customer_InDc").parent().siblings("i");
+			$(temp).attr("class","fas fa-equals");
+			$(temp).css("color","#0693f7");	
+			$(temp).css("font-size","20px");	
+		}
+		if(returnOrderInDc > 0)
+		{
+			var temp = $("#Return_Order_InDc").parent().siblings("i");
+			$(temp).attr("class","fa fa-caret-up");
+			$(temp).css("color","green");
+			$(temp).css("font-size","30px");
+		}
+		else if(returnOrderInDc < 0)
+		{
+			var temp = $("#Return_Order_InDc").parent().siblings("i");
+			$(temp).attr("class","fa fa-caret-down");
+			$(temp).css("color","red");	
+			$(temp).css("font-size","30px");	
+		}
+		else
+		{
+			var temp = $("#Return_Order_InDc").parent().siblings("i");
+			$(temp).attr("class","fas fa-equals");
+			$(temp).css("color","#0693f7");	
+			$(temp).css("font-size","20px");	
+		}
+		/*if(repeatOrderInDc > 0)
+		{
+			var temp = $("#Repeat_Order_InDc").parent().siblings("i");
+			$(temp).attr("class","fa fa-caret-up");
+			$(temp).css("color","green");
+		}
+		else
+		{
+			var temp = $("#Repeat_Order_InDc").parent().siblings("i");
+			$(temp).attr("class","fa fa-caret-down");
+			$(temp).css("color","red");		
+		}*/
+		if(ROVInDc > 0)
+		{
+			var temp = $("#ROV_InDc").parent().siblings("i");
+			$(temp).attr("class","fa fa-caret-up");
+			$(temp).css("color","green");
+			$(temp).css("font-size","30px");
+		}
+		else if(ROVInDc < 0)
+		{
+			var temp = $("#ROV_InDc").parent().siblings("i");
+			$(temp).attr("class","fa fa-caret-down");
+			$(temp).css("color","red");	
+			$(temp).css("font-size","30px");	
+		}
+		else
+		{
+			var temp = $("#ROV_InDc").parent().siblings("i");
+			$(temp).attr("class","fas fa-equals");
+			$(temp).css("color","#0693f7");	
+			$(temp).css("font-size","20px");	
+		}
+		if(ARPCInDc > 0)
+		{
+			var temp = $("#ARPC_InDc").parent().siblings("i");
+			$(temp).attr("class","fa fa-caret-up");
+			$(temp).css("color","green");
+			$(temp).css("font-size","30px");
+		}
+		else if(ARPCInDc < 0)
+		{
+			var temp = $("#ARPC_InDc").parent().siblings("i");
+			$(temp).attr("class","fa fa-caret-down");
+			$(temp).css("color","red");
+			$(temp).css("font-size","30px");		
+		}
+		else
+		{
+			var temp = $("#ARPC_InDc").parent().siblings("i");
+			$(temp).attr("class","fas fa-equals");
+			$(temp).css("color","#0693f7");	
+			$(temp).css("font-size","20px");	
+		}
+		if(UPTInDc > 0)
+		{
+			var temp = $("#UPT_InDc").parent().siblings("i");
+			$(temp).attr("class","fa fa-caret-up");
+			$(temp).css("color","green");
+			$(temp).css("font-size","30px");
+		}
+		else if(UPTInDc < 0)
+		{
+			var temp = $("#UPT_InDc").parent().siblings("i");
+			$(temp).attr("class","fa fa-caret-down");
+			$(temp).css("color","red");	
+			$(temp).css("font-size","30px");	
+		}
+		else
+		{
+			var temp = $("#UPT_InDc").parent().siblings("i");
+			$(temp).attr("class","fas fa-equals");
+			$(temp).css("color","#0693f7");
+			$(temp).css("font-size","20px");		
+		}
+	}
+	function fnLoadOverviewProductData(o)
+	{
+		$("#tblSpinner").html("<div class='spinner-border spinner-border-sm spinner-purple'></div>");
+		var period1 = $("#period1").val();
+		$.post(
+		{
+			url: "OverviewProductServlet",
+			data: 
+			{
+				period1: period1
+			},
+			success: function(data)
+			{
+				fnPopulateOverviewProductData(data);
+				$("#tblSpinner").html("");
+			}
+		});
+	}
+	function fnPopulateOverviewProductData(data)
+	{
+		$("#overviewProductTbody").html("");
+		var products = $(data).find("Product");
+		for(i=0; i<products.length; i++)
+		{
+			var cp = $(products[i]).find("CategoryPerformance").text();
+			var sa = $(products[i]).find("Sales").text();
+			var or = $(products[i]).find("Orders").text();
+			var cu = $(products[i]).find("Customers").text();
+			var nc = $(products[i]).find("NewCustomer").text();
+			var rc = $(products[i]).find("RepeatCustomer").text();
+			var ro = $(products[i]).find("ReturnOrder").text();
+						
+			var row = $("<tr>");
+			var col1 = $("<td>");
+			var col2 = $("<td>");
+			var col3 = $("<td>");
+			var col4 = $("<td>");
+			var col5 = $("<td>");
+			var col6 = $("<td>");
+			var col7 = $("<td>");
+			
+			$(col1).append(cp);
+			$(col2).append(sa);
+			$(col3).append(or);
+			$(col4).append(cu);
+			$(col5).append(nc);
+			$(col6).append(rc);
+			$(col7).append(ro);
+			
+			$(row).append(col1);
+			$(row).append(col2);
+			$(row).append(col3);
+			$(row).append(col4);
+			$(row).append(col5);
+			$(row).append(col6);
+			$(row).append(col7);
+			
+			$("#overviewProductTbody").append(row);
+		}
+	}
+	function fnLoadProductPerformanceCharts(o)
+	{
+		$("#chart1Spinner").html("<div class='spinner-border spinner-border-sm spinner-purple'></div>");
+		var period1 = $("#period1").val();
+		$.post(
+		{
+			url: "ProductPerformanceServlet",
+			data: 
+			{
+				period1: period1
+			},
+			success: function(data)
+			{
+				fnPopulateProductPerformanceCharts(data);
+				$("#chart1Spinner").html("");
+			},
+			error: function(er)
+			{
+				alert(er);
+			}
+		});
+	}
+	function fnPopulateProductPerformanceCharts(data)
+	{
+		setTimeout(function()
+		{
+			var pp = $(data).find("ProductPerformance");
+			
+			var dataArray=[], CategoryNames=[]; 
+			
+			for(i=0; i<pp.length; i++)
+			{
+				dataArray[i] = parseFloat($(pp[i]).find("Revenue").text());
+				CategoryNames[i] = $(pp[i]).find("Product").text();
+			}
+			Highcharts.setOptions({
+				lang: 
+				{
+					//numericSymbols: ["K", "M", "B", "T", "P", "E"],
+				    thousandsSep: ''
+			  	}
+			})
+			Highcharts.chart('chart1',
+			{
+				chart: 
+				{
+					type: 'bar',
+					zoomType: 'x'
+				},
+				title: 
+				{
+					text: 'Top Products - Revenue'
+				},
+				xAxis: 
+				[{
+					categories: CategoryNames,
+					lineWidth: 1
+				}],
+				yAxis: 
+				[{
+					type: 'logarithmic',
+					title: 
+					{
+						text: 'Revenue'
+					},
+					gridLineWidth: 0,
+					lineWidth: 1,
+					allowDecimals: false
+				}],
+				tooltip: 
+				{
+					formatter: function () 
+					{
+				    	return this.points.reduce(function (s, point) 
+				        {
+				        	return s + '<br/>' + point.series.name + ': ' + point.y ;
+						}, '<b>' + this.x + '</b>');
+					},
+					shared: true
+				},
+				plotOptions:
+				{
+					bar:
+					{
+						dataLabels: 
+						{
+							enabled: true,
+							crop: false,
+			     			overflow: 'none',
+			                style:
+						    {
+						    	textOutline: false,
+						    	fontWeight: 20,
+						    	fontSize: '1.0em'
+						    }
+						},
+						pointWidth:30
+					}
+				},
+				legend: 
+				{
+					enabled: false
+				},
+				credits:
+				{
+					enabled: false
+				},
+				series: 
+				[{
+					name: 'Revenue',
+					data: dataArray,
+					dataLabels:
+					{
+						enabled: true
+					},
+					color: '#7851a1'
+				}]
+			});
+			fnFormatNumbers("chart1");
+		}, 200);
+	}
+
+	function fnFormatNumbers(objName)
+	{
+		var o = $("#"+objName);
+		var text = $(o).find(".highcharts-data-label").find("text");
+		for(i=0; i<text.length; i++)
+		{
+			var num = $(text[i]).text();
+			console.info("num: "+num);
+			if(num.startsWith("$"))
+			{
+				num = num.split(" ")[1];
+			}
+			var count = -1;
+			var temp = parseFloat(num);
+			console.info("temp: "+temp);
+			while(temp>1)
+			{
+				temp = temp / 1000;
+				count++;
+			}
+			console.info("temp: "+temp);
+
+			temp = temp * 1000;
+			temp = temp.toPrecision(3);
+			var temp2 = "";
+			console.info("count: "+count);
+
+			if(count==0)
+			{
+				temp2 = temp;
+			}
+			if(count == 1)
+			{
+				temp2 = temp + "K";
+			}
+			else if(count == 2)
+			{
+				temp2 = temp + "M";
+			}
+			else if(count == 3)
+			{
+				temp2 = temp + "B";
+			}
+			//alert(temp2);
+			$(text[i]).html(temp2);	
+		}
+	}
+	function fnLoadProductPerformance(o)
+	{
+		$("#imgDeckSpinner").html("<div class='spinner-border spinner-border-sm spinner-purple'></div>");
+		var period1 = $("#period1").val();
+		$.post(
+		{
+			url: "OverviewProductPerformanceServlet",
+			data: 
+			{
+				period1: period1
+			},
+			success: function(data)
+			{
+				fnPopulateProductPerformance(data);
+				$("#imgDeckSpinner").html("");
+			}
+		});
+	}
+	function fnPopulateProductPerformance(data)
+	{
+		var pp = $(data).find("ProductPerformance");
+		$("#productImgsDeck").html("");
+		for(i=0; i<pp.length; i++)
+		{
+			var p = $(pp[i]).find("Product").text();
+			var s = $(pp[i]).find("Sales").text();
+			var c = $(pp[i]).find("Customers").text();
+			var o = $(pp[i]).find("Orders").text();
+			
+			var mDiv = $("<div class='card img-fluid'>");
+			var eImg = $("<img class='card-img' src='images/Mimosa/"+p+".jpg'>");
+			var cioDiv = $("<div class='card-img-overlay h-100 d-flex flex-column justify-content-end'>");
+			var tbDiv = $("<div class='transbox'>");
+			var eP = $("<p class='card-text'>Sales '"+s+"'<br/>Orders '"+o+"'<br/>Customers '"+c+"'</p>");
+			
+			$(tbDiv).append(eP);
+			$(cioDiv).append(tbDiv);
+			$(mDiv).append(eImg)
+			$(mDiv).append(cioDiv);
+			$("#productImgsDeck").append(mDiv);
+		}
+		/*<div class="card img-fluid">
+			<img class="card-img" src="images/watch.jpg" alt="Watch image">
+			<div class="card-img-overlay h-100 d-flex flex-column justify-content-end">
+				<div class="transbox">
+  					<p class="card-text">Sales $90,750<br/>Orders 3,620<br/>Customers 1,490</p>
+  				</div>
+    		</div>
+		</div>*/
+	}
+</script>
+<script>
+	function fnGetCountries()
+	{
+		$("#spinnerForCountry").html("<div class='spinner-border spinner-border-sm spinner-purple'></div>");
+		$.post(
+		{
+			url: "CountryServlet",
+			success: function(data)
+			{
+				fnPopulateCountries(data);
+				$("#spinnerForCountry").html("");
+			},
+			error: function(error)
+			{
+				console.info(error);
+				alert(error);
+			}
+		});
+	}
+	function fnPopulateCountries(data)
+	{
+		var country = $(data).find("Country");
+		$("#country").html("");
+		console.info(country);
+		for(i=0; i<country.length; i++)
+		{
+			var cou = $(country[i]).text();
+			var option = $("<option value='"+cou+"'>"+cou+"</option>");
+			$("#country").append(option);
+		}
+		$("#state").html("");
+		$("#state").append("<option value='OVERALL'>OVERALL</option>");
+		$("#city").append("<option value='OVERALL'>OVERALL</option>");
+	}
+	function fnGetStates()
+	{
+		var country = $("#country").val();
+		$.post(
+		{
+			url: "StateServlet",
+			data: 
+			{
+				country: country
+			},
+			success: function(data)
+			{
+				fnPopulateStates(data);
+			},
+			error: function(error)
+			{
+				console.info(error);
+				alert(error);
+			}
+		});
+		
+	}
+	function fnPopulateStates(data)
+	{
+		var states = $(data).find("State");
+		$("#state").html("");
+		for(i=0; i<states.length; i++)
+		{
+			var state = $(states[i]).text();
+			var option = $("<option value='"+state+"'>"+state+"</option>");
+			$("#state").append(option);
+		}
+		$("#city").html("");
+		$("#city").append("<option value='OVERALL'>OVERALL</option>");
+	}
+	function fnGetCities()
+	{
+		var state = $("#state").val();
+		$.post(
+		{
+			url: "CityServlet",
+			data: 
+			{
+				state: state
+			},
+			success: function(data)
+			{
+				fnPopulateCities(data);
+			},
+			error: function(error)
+			{
+				console.info(error);
+			}
+		});
+	}
+	function fnPopulateCities(data)
+	{
+		var cities = $(data).find("City");
+		$("#city").html("");
+		for(i=0; i<cities.length; i++)
+		{
+			var city = $(cities[i]).text();
+			var option = $("<option value='"+city+"'>"+city+"</option>");
+			$("#city").append(option);
+		}
+	}
+	function fnGetDepartments()
+	{
+		$("#spinnerForDepartment").html("<div class='spinner-border spinner-border-sm spinner-purple'></div>");
+		$.post(
+		{
+			url: "DepartmentServlet",
+			data: 
+			{
+			},
+			success: function(data)
+			{
+				fnPopulateDepartments(data);
+				$("#spinnerForDepartment").html("");
+				//$("#applyFiltersBtn").trigger("click");	
+				
+			},
+			error: function(error)
+			{
+				console.info(error);
+			}
+		});
+		
+	}
+	function fnPopulateDepartments(data)
+	{
+		var departments = $(data).find("Department");
+		$("#department").html("");
+		for(i=0; i<departments.length; i++)
+		{
+			var department = $(departments[i]).text();
+			var option = $("<option value='"+department+"'>"+department+"</option>");
+			$("#department").append(option);
+		}
+		$("#category").html("");
+		$("#category").append("<option value='OVERALL'>OVERALL</option>");
+	}
+	function fnGetCategories()
+	{
+		var department = $("#department").val();
+		$.post(
+		{
+			url: "CategoryServlet",
+			data: 
+			{
+				department: department
+			},
+			success: function(data)
+			{
+				fnPopulateCategories(data);
+			},
+			error: function(error)
+			{
+				console.info(error);
+			}
+		});
+	}
+	function fnPopulateCategories(data)
+	{
+		var categories = $(data).find("Category");
+		$("#category").html("");
+		for(i=0; i<categories.length; i++)
+		{
+			var category = $(categories[i]).text();
+			var option = $("<option value='"+category+"'>"+category+"</option>");
+			$("#category").append(option);
+		}
+	}
+	function fnLoadRPKpisData()
+	{
+		$("#rpKpiSpinner").html("<div class='spinner-border spinner-border-sm spinner-purple'></div>");
+		var country = $("#country").val();
+		var state = $("#state").val();
+		var city = $("#city").val();
+		var department = $("#department").val();
+		var category = $("#category").val();
+		var period2 = $("#period2").val();
+		
+		$.post(
+		{
+			url: "RegionPerformanceKpiServlet",
+			data: 
+			{
+				country: country,
+				state: state,
+				city: city,
+				department: department,
+				category: category,
+				period2: period2
+			},
+			success: function(data)
+			{
+				fnPopulateRPKpisData(data);
+				$("#rpKpiSpinner").html("");
+			}
+		});
+	}
+	function fnPopulateRPKpisData(data)
+	{
+		var kpi = $(data).find("Kpi");
+		console.info("KPI: "+kpi.length);
+		if(kpi.length==0)
+		{
+			$("#rpKpiStatusMessage").html("No records found for KPI's.");
+			$("#rpSales").html("");
+			$("#rpSales_InDc").html("");
+			$("#rpOrders").html("");
+			$("#rpOrders_InDc").html("");
+			$("#rpTotal_Customer").html("");
+			$("#rpTotal_Customer_InDc").html("");
+			$("#rpReturn_Order").html("");
+			$("#rpReturn_Order_InDc").html("");
+			$("#rpRepeat_Order").html("");
+			$("#rpRepeat_Order_InDc").html("");
+			$("#rpRepeat_Order_Value").html("");
+			$("#rpROV_InDc").html("");
+			$("#rpARPC").html("");
+			$("#rpARPC_InDc").html("");
+			$("#rpUPT").html("");
+			$("#rpUPT_InDc").html("");
+		}
+		else
+		{
+			$("#rpKpiStatusMessage").html("");
+		
+			var sales = $(kpi).find("Sales").text();
+			console.info("### Sales: "+sales);
+			var salesInDc = $(kpi).find("SalesInDc").text();
+			var orders = $(kpi).find("Orders").text();
+			var ordersInDc = $(kpi).find("OrdersInDc").text();
+			var totalCustomer = $(kpi).find("TotalCustomer").text();
+			var totalCustomerInDc = $(kpi).find("TotalCustomerInDc").text();
+			var returnOrder = $(kpi).find("ReturnOrder").text();
+			var returnOrderInDc = $(kpi).find("ReturnOrderInDc").text();
+			var repeatOrder = $(kpi).find("RepeatOrder").text();
+			var repeatOrderInDc = $(kpi).find("RepeatOrderInDc").text();
+			var repeatOrderValue = $(kpi).find("RepeatOrderValue").text();
+			var ROVInDc = $(kpi).find("ROVInDc").text();
+			var ARPC = $(kpi).find("ARPC").text();
+			var ARPCInDc = $(kpi).find("ARPCInDc").text();
+			var UPT = $(kpi).find("UPT").text();
+			var UPTInDc = $(kpi).find("UPTInDc").text();
+		
+			$("#rpSales").html(sales);
+			$("#rpSales_InDc").html(salesInDc);
+			$("#rpOrders").html(orders);
+			$("#rpOrders_InDc").html(ordersInDc);
+			$("#rpTotal_Customer").html(totalCustomer);
+			$("#rpTotal_Customer_InDc").html(totalCustomerInDc);
+			$("#rpReturn_Order").html(returnOrder);
+			$("#rpReturn_Order_InDc").html(returnOrderInDc);
+			$("#rpRepeat_Order").html(repeatOrder);
+			$("#rpRepeat_Order_InDc").html(repeatOrderInDc);
+			$("#rpRepeat_Order_Value").html(repeatOrderValue);
+			$("#rpROV_InDc").html(ROVInDc);
+			$("#rpARPC").html(ARPC);
+			$("#rpARPC_InDc").html(ARPCInDc);
+			$("#rpUPT").html(UPT);
+			$("#rpUPT_InDc").html(UPTInDc);
+	
+			if(salesInDc > 0)
+			{
+				var temp = $("#rpSales_InDc").parent().siblings("i");
+				$(temp).attr("class","fa fa-caret-up");
+				$(temp).css("color","green");
+				$(temp).css("font-size","30px");
+			}
+			else if(salesInDc < 0)
+			{
+				var temp = $("#rpSales_InDc").parent().siblings("i");
+				$(temp).attr("class","fa fa-caret-down");
+				$(temp).css("color","red");	
+				$(temp).css("font-size","30px");	
+			}
+			else
+			{
+				var temp = $("#Sales_InDc").parent().siblings("i");
+				$(temp).attr("class","fas fa-equals");
+				$(temp).css("color","#0693f7");	
+				$(temp).css("font-size","20px");	
+			}
+			if(ordersInDc > 0)
+			{
+				var temp = $("#rpOrders_InDc").parent().siblings("i");
+				$(temp).attr("class","fa fa-caret-up");
+				$(temp).css("color","green");
+				$(temp).css("font-size","30px");
+			}
+			else if(ordersInDc < 0)
+			{
+				var temp = $("#rpOrders_InDc").parent().siblings("i");
+				$(temp).attr("class","fa fa-caret-down");
+				$(temp).css("color","red");	
+				$(temp).css("font-size","30px");	
+			}
+			else
+			{
+				var temp = $("#rpOrders_InDc").parent().siblings("i");
+				$(temp).attr("class","fas fa-equals");
+				$(temp).css("color","#0693f7");	
+				$(temp).css("font-size","20px");	
+			}
+			if(totalCustomerInDc > 0)
+			{
+				var temp = $("#rpTotal_Customer_InDc").parent().siblings("i");
+				$(temp).attr("class","fa fa-caret-up");
+				$(temp).css("color","green");
+				$(temp).css("font-size","30px");
+			}
+			else if(totalCustomerInDc < 0)
+			{
+				var temp = $("#rpTotal_Customer_InDc").parent().siblings("i");
+				$(temp).attr("class","fa fa-caret-down");
+				$(temp).css("color","red");	
+				$(temp).css("font-size","30px");	
+			}
+			else
+			{
+				var temp = $("#rpTotal_Customer_InDc").parent().siblings("i");
+				$(temp).attr("class","fas fa-equals");
+				$(temp).css("color","#0693f7");	
+				$(temp).css("font-size","20px");	
+			}
+			if(returnOrderInDc > 0)
+			{
+				var temp = $("#Return_Order_InDc").parent().siblings("i");
+				$(temp).attr("class","fa fa-caret-up");
+				$(temp).css("color","green");
+				$(temp).css("font-size","30px");
+			}
+			else if(returnOrderInDc < 0)
+			{
+				var temp = $("#rpReturn_Order_InDc").parent().siblings("i");
+				$(temp).attr("class","fa fa-caret-down");
+				$(temp).css("color","red");	
+				$(temp).css("font-size","30px");	
+			}
+			else
+			{
+				var temp = $("#rpReturn_Order_InDc").parent().siblings("i");
+				$(temp).attr("class","fas fa-equals");
+				$(temp).css("color","#0693f7");	
+				$(temp).css("font-size","20px");	
+			}
+			if(repeatOrderInDc > 0)
+			{
+				var temp = $("#rpRepeat_Order_InDc").parent().siblings("i");
+				$(temp).attr("class","fa fa-caret-up");
+				$(temp).css("color","green");
+			}
+			else if(repeatOrderInDc < 0)
+			{
+				var temp = $("#rpRepeat_Order_InDc").parent().siblings("i");
+				$(temp).attr("class","fa fa-caret-down");
+				$(temp).css("color","red");		
+			}
+			else
+			{
+				var temp = $("#rpRepeat_Order_InDc").parent().siblings("i");
+				$(temp).attr("class","fas fa-equals");
+				$(temp).css("color","#0693f7");	
+				$(temp).css("font-size","20px");	
+			}
+			if(ROVInDc > 0)
+			{
+				var temp = $("#rpROV_InDc").parent().siblings("i");
+				$(temp).attr("class","fa fa-caret-up");
+				$(temp).css("color","green");
+				$(temp).css("font-size","30px");
+			}
+			else if(ROVInDc < 0)
+			{
+				var temp = $("#rpROV_InDc").parent().siblings("i");
+				$(temp).attr("class","fa fa-caret-down");
+				$(temp).css("color","red");	
+				$(temp).css("font-size","30px");	
+			}
+			else
+			{
+				var temp = $("#rpROV_InDc").parent().siblings("i");
+				$(temp).attr("class","fas fa-equals");
+				$(temp).css("color","#0693f7");	
+				$(temp).css("font-size","20px");	
+			}
+			if(ARPCInDc > 0)
+			{
+				var temp = $("#rpARPC_InDc").parent().siblings("i");
+				$(temp).attr("class","fa fa-caret-up");
+				$(temp).css("color","green");
+				$(temp).css("font-size","30px");
+			}
+			else if(ARPCInDc < 0)
+			{
+				var temp = $("#rpARPC_InDc").parent().siblings("i");
+				$(temp).attr("class","fa fa-caret-down");
+				$(temp).css("color","red");
+				$(temp).css("font-size","30px");		
+			}
+			else
+			{
+				var temp = $("#rpARPC_InDc").parent().siblings("i");
+				$(temp).attr("class","fas fa-equals");
+				$(temp).css("color","#0693f7");	
+				$(temp).css("font-size","20px");	
+			}
+			if(UPTInDc > 0)
+			{
+				var temp = $("#rpUPT_InDc").parent().siblings("i");
+				$(temp).attr("class","fa fa-caret-up");
+				$(temp).css("color","green");
+				$(temp).css("font-size","30px");
+			}
+			else if(UPTInDc < 0)
+			{
+				var temp = $("#rpUPT_InDc").parent().siblings("i");
+				$(temp).attr("class","fa fa-caret-down");
+				$(temp).css("color","red");	
+				$(temp).css("font-size","30px");	
+			}
+			else
+			{
+				var temp = $("#rpUPT_InDc").parent().siblings("i");
+				$(temp).attr("class","fas fa-equals");
+				$(temp).css("color","#0693f7");
+				$(temp).css("font-size","20px");		
+			}
+		}
+	}
+	function fnLoadRegionPerfTable()
+	{
+		$("#regionPerTbl").html("");
+		$("#rpTblSpinner").html("<div class='spinner-border spinner-border-sm spinner-purple'></div>");
+		var country = $("#country").val();
+		var state = $("#state").val();
+		var city = $("#city").val();
+		var department = $("#department").val();
+		var category = $("#category").val();
+		var period2 = $("#period2").val();
+		
+		$.post(
+		{
+			url: "RegionPerformanceTableServlet",
+			data: 
+			{
+				country: country,
+				state: state,
+				city: city,
+				department: department,
+				category: category,
+				period2: period2
+			},
+			success: function(data)
+			{
+				fnPopulateRegionPerfTable(data);
+				$("#rpTblSpinner").html("");
+			}
+		});
+	}
+	function fnPopulateRegionPerfTable(data)
+	{
+		var tbl = $("<table class='table table-hover table-bordered table-responsive' id='regionPerTbl'>");
+		var thead = $("<thead class='table-secondary'>");
+		var tbody = $("<tbody>");
+		
+		var row = $("<tr>");
+		var col1 = $("<th>");
+		var col2 = $("<th>");
+		var col3 = $("<th>");
+		var col4 = $("<th>");
+		var col5 = $("<th>");
+		var col6 = $("<th>");
+		var col7 = $("<th>");
+		var col8 = $("<th>");
+		var col9 = $("<th>");
+
+		$(col1).append("Department");
+		$(col2).append("Category");
+		$(col3).append("Item");
+		$(col4).append("Sales");
+		$(col5).append("Orders");
+		$(col6).append("Total Customers");
+		$(col7).append("New Customers");
+		$(col8).append("Repeat Customers")
+		$(col9).append("Cancelled Orders");
+		
+		$(row).append(col1);
+		$(row).append(col2);
+		$(row).append(col3);
+		$(row).append(col4);
+		$(row).append(col5);
+		$(row).append(col6);
+		$(row).append(col7);
+		$(row).append(col8);
+		$(row).append(col9);
+		
+		$(thead).append(row);
+		
+		var prodsRow = $(data).find("ProductsRow");
+		if(prodsRow.length==0)
+		{
+			$("#rpTblDivStatusMessage").html("No records found for Table.");
+		}
+		else
+		{	
+			$("#rpTblDivStatusMessage").html("");
+			for(i=0; i<prodsRow.length; i++)
+			{
+				var dept = $(prodsRow[i]).find("Department").text();
+				var cat = $(prodsRow[i]).find("Category").text();
+				var item = $(prodsRow[i]).find("Item").text();
+				var sales = $(prodsRow[i]).find("Sales").text();
+				var orders = $(prodsRow[i]).find("Orders").text();
+				var cust = $(prodsRow[i]).find("Customers").text();
+				var newCust = $(prodsRow[i]).find("NewCustomers").text();
+				var rptCust = $(prodsRow[i]).find("RepeatCustomers").text();
+				var rtnOrders = $(prodsRow[i]).find("ReturnOrders").text();
+				
+				var row = $("<tr>");
+				var col1 = $("<td>");
+				var col2 = $("<td>");
+				var col3 = $("<td>");
+				var col4 = $("<td>");
+				var col5 = $("<td>");
+				var col6 = $("<td>");
+				var col7 = $("<td>");
+				var col8 = $("<td>");
+				var col9 = $("<td>");
+				
+				$(col1).append(dept);
+				$(col2).append(cat);
+				$(col3).append(item);
+				$(col4).append(sales);
+				$(col5).append(orders);
+				$(col6).append(cust);
+				$(col7).append(newCust);
+				$(col8).append(rptCust);
+				$(col9).append(rtnOrders);
+				
+				$(row).append(col1);
+				$(row).append(col2);
+				$(row).append(col3);
+				$(row).append(col4);
+				$(row).append(col5);
+				$(row).append(col6);
+				$(row).append(col7);
+				$(row).append(col8);
+				$(row).append(col9);
+				
+				$(tbody).append(row);
+			}
+			$(tbl).append(thead);
+			$(tbl).append(tbody);
+			$("#regionPerTbl").append(tbl);
+		}
+	}
+	function fnLoadRPCustSalesChannels()
+	{
+		$("#rpChart5Spinner").html("<div class='spinner-border spinner-border-sm spinner-purple'></div>");
+		var country = $("#country").val();
+		var state = $("#state").val();
+		var city = $("#city").val();
+		var department = $("#department").val();
+		var category = $("#category").val();
+		var period2 = $("#period2").val();
+		
+		$.post(
+		{
+			url: "RPCustSalesChannelsServlet",
+			data: 
+			{
+				country: country,
+				state: state,
+				city: city,
+				department: department,
+				category: category,
+				period2: period2
+			},
+			success: function(data)
+			{
+				fnPopulateRPCustSalesChannels(data);
+				$("#rpChart5Spinner").html("");
+			}
+		});
+	}
+	function fnPopulateRPCustSalesChannels(data)
+	{
+		var pp = $(data).find("Chart");
+		if(pp.length==0)
+		{
+			$("#rpChart5StatusMessage").html("No records found for % Customers by Sales Channels.");
+			$("#chart5").html("");
+		}
+		else
+		{
+			$("#rpChart5StatusMessage").html("");
+			setTimeout(function()
+			{
+				var dataArray=[]; 
+				for(i=0; i<pp.length; i++)
+				{
+					var source = $(pp[i]).find("Source").text();
+					var customers = parseFloat($(pp[i]).find("Customers").text());
+					
+					var obj = new Object();
+					obj.name = source;
+					obj.y = customers;
+					dataArray[i] = obj;
+				} 
+				var pieColors = (function () 
+				{
+					var colors = [],
+					base = Highcharts.getOptions().colors[0],
+					i;
+					for (i = 0; i < 8; i += 1) 
+					{
+						// Start out with a darkened base color (negative brighten), and end
+					    // up with a much brighter color
+					    colors.push(Highcharts.color(base).brighten((i - 2) / 6).get());
+					}
+					return colors;
+				}());
+				Highcharts.chart('chart5', 
+				{
+					chart: 
+					{
+						borderWidth: 1,
+					    type: 'pie'
+					},
+					title: 
+					{
+						text: '% of Customers By Sales Channels'
+					},
+					tooltip: 
+					{
+						pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+					},
+					accessibility: 
+					{
+						point: 
+					    {
+					    	valueSuffix: '%'
+						}
+					},
+					plotOptions:
+					{
+						pie: 
+					    {
+					    	allowPointSelect: true,
+					    	cursor: 'pointer',
+					        colors: pieColors,
+					        dataLabels:
+							{
+						    	shadow:false,
+								enabled: false,
+								inside: true,
+								color: 'black',
+								distance: 1,
+								style:
+								{
+									textOutline: false,
+									fontWeight: 30,
+									fontSize: '1.0em'
+								},
+								formatter:function() 
+								{
+					        		return this.y + ' ' + '%';
+							    }
+							}
+						}
+					},
+					legend: 
+					{
+						layout: 'vertical',
+			            align: 'right',
+			            verticalAlign: 'middle',
+					},
+			        credits: 
+			    	{
+			    		enabled: false
+			    	},
+					series: 
+					[{
+						name: 'Share',
+						data: dataArray
+					}]
+				});
+			}, 200);
+		}
+	}
+	function fnLoadRPSalesTrendChart()
+	{
+		$("#rpChart3Spinner").html("<div class='spinner-border spinner-border-sm spinner-purple'></div>");
+		$("#rpChart4Spinner").html("<div class='spinner-border spinner-border-sm spinner-purple'></div>");
+		var country = $("#country").val();
+		var state = $("#state").val();
+		var city = $("#city").val();
+		var department = $("#department").val();
+		var category = $("#category").val();
+		var period2 = $("#period2").val();
+		$.post(
+		{
+			url: "RPSalesTrendServlet",
+			data: 
+			{
+				country: country,
+				state: state,
+				city: city,
+				department: department,
+				category: category,
+				period2: period2
+			},
+			success: function(data)
+			{
+				fnPopulateRPSalesTrendVolumeChart(data);
+				fnPopulateRPSalesTrendValueChart(data);
+				$("#rpChart3Spinner").html("");
+				$("#rpChart4Spinner").html("");
+			},
+			error: function(error)
+			{
+				alert(error);
+			}
+		});
+	}
+	function fnPopulateRPSalesTrendVolumeChart(data)
+	{
+		var t = $(data).find("Trend");
+		if(t.length==0)
+		{
+			$("#rpChart3StatusMessage").html("No records found for Sales Trend - Volume.");
+			$("#chart3").html("");
+		}
+		else
+		{
+			$("#rpChart3StatusMessage").html("");
+			setTimeout(function()
+			{
+				var dataArray=[], CategoryNames=[]; 
+				
+				for(i=0; i<t.length; i++)
+				{
+					dataArray[i] = parseFloat($(t[i]).find("Volume").text());
+					CategoryNames[i] = $(t[i]).find("Sale").text();
+				}
+				Highcharts.setOptions({
+					lang: 
+					{
+						 //numericSymbols: ["K", "M", "B", "T", "P", "E"],
+					     thousandsSep: ','
+				  	}
+				})
+				Highcharts.chart('chart3',
+				{
+					chart: 
+					{
+						borderWidth: 1,
+						type: 'spline'
+					},
+					title: 
+					{
+						text: 'Sales Trend - Volume'
+					},
+					xAxis: 
+					[{
+						categories: CategoryNames,
+						title:
+						{
+							text: 'Period'
+						},
+						lineWidth: 1
+					}],
+					yAxis: 
+					[{
+						title: 
+						{
+							text: 'Volume'
+						},
+						min: 0,
+						lineWidth: 1,
+						gridLineWidth: 0,
+						allowDecimals: false
+					}],
+					tooltip: 
+					{
+						formatter: function () 
+						{
+					    	return this.points.reduce(function (s, point) 
+					        {
+					        	return s + '<br/>' + point.series.name + ': ' + point.y ;
+							}, '<b>' + this.x + '</b>');
+						},
+						shared: true
+					},
+					plotOptions:
+					{
+						spline:
+						{
+							dataLabels: 
+							{
+								enabled: true,
+								crop: false,
+				     			overflow: 'none',
+				                style:
+							    {
+							    	textOutline: false,
+							    	fontWeight: 20,
+							    	fontSize: '1.0em'
+							    }
+							},
+							pointWidth:30
+						}
+					},
+					legend: 
+					{
+						enabled: false
+					},
+					credits:
+					{
+						enabled: false
+					},
+					series: 
+					[{
+						name: 'Volume',
+						data: dataArray,
+						dataLabels:
+						{
+							formatter:function() 
+							{
+								return this.y;
+							}
+						},
+						color: '#f7931f'
+					}]
+				});
+			}, 200);
+		}
+	}
+	function fnPopulateRPSalesTrendValueChart(data)
+	{
+		var t = $(data).find("Trend");
+		if(t.length==0)
+		{
+			$("#rpChart4StatusMessage").html("No records found for Sales Trend - Value.");
+			$("#chart4").html("");
+		}
+		else
+		{
+			$("#rpChart4StatusMessage").html("");
+			setTimeout(function()
+			{
+				var dataArray=[], CategoryNames=[]; 
+				
+				for(i=0; i<t.length; i++)
+				{
+					dataArray[i] = parseFloat($(t[i]).find("Value").text());
+					CategoryNames[i] = $(t[i]).find("Sale").text();
+				}
+				Highcharts.setOptions({
+					lang: 
+					{
+						 //numericSymbols: ["K", "M", "B", "T", "P", "E"],
+					     thousandsSep: ','
+				  	}
+				})
+				Highcharts.chart('chart4',
+				{
+					chart: 
+					{
+						borderWidth: 1,
+						type: 'spline'
+					},
+					title: 
+					{
+						text: 'Sales Trend - Value'
+					},
+					xAxis: 
+					[{
+						categories: CategoryNames,
+						title:
+						{
+							text: 'Period'
+						},
+						lineWidth: 1
+					}],
+					yAxis: 
+					[{
+						title: 
+						{
+							text: 'Value'
+						},
+						min: 0,
+						lineWidth: 1,
+						gridLineWidth: 0,
+						allowDecimals: false
+					}],
+					tooltip: 
+					{
+						formatter: function () 
+						{
+					    	return this.points.reduce(function (s, point) 
+					        {
+					        	return s + '<br/>' + point.series.name + ': ' + point.y ;
+							}, '<b>' + this.x + '</b>');
+						},
+						shared: true
+					},
+					plotOptions:
+					{
+						spline:
+						{
+							dataLabels: 
+							{
+								enabled: true,
+								crop: false,
+				     			overflow: 'none',
+				                style:
+							    {
+							    	textOutline: false,
+							    	fontWeight: 20,
+							    	fontSize: '1.0em'
+							    }
+							},
+							pointWidth:30
+						}
+					},
+					legend: 
+					{
+						enabled: false
+					},
+					credits:
+					{
+						enabled: false
+					},
+					series: 
+					[{
+						name: 'Value',
+						data: dataArray,
+						dataLabels:
+						{
+							formatter:function() 
+							{
+								return this.y;
+							}
+						},
+						color: '#f7931f'
+					}]
+				});
+				fnFormatNumbers("chart4");
+			}, 200);
+		}
+	}
+	function fnLoadAll()
+	{
+		fnLoadOverviewData(); 
+		fnLoadOverviewProductData(); 
+		fnLoadProductPerformanceCharts(); 
+		fnLoadProductPerformance();
+		
+	}
+	function fnLoadCountriesAndDepts()
+	{
+		fnGetCountries();
+		fnGetDepartments();
+	}
+</script>
+</head>
+
+<body onload="fnLoadAll()">
+<div class="content container-fluid">
+	<nav class="navbar navbar-expand-sm bg-secondary navbar-dark">
+		<ul class="navbar-nav mr-auto">
+			<li class="nav-item">
+				<a class="nav-link" href="executiveSummary.html">Executive Summary</a>
+		    </li>
+		    <li class="nav-item active">
+				<a class="nav-link" href="overview.html">Overview</a>
+		    </li>
+		    <li class="nav-item">
+				<a class="nav-link" href="customerAnalysis.html">Customer Analysis</a>
+		    </li>
+		    <li class="nav-item">
+				<a class="nav-link" href="productAnalysis.html">Product Analysis</a>
+		    </li>
+		    <li class="nav-item">
+				<a class="nav-link" href="campaignAnalysis.html">Campaign Analysis</a>
+		    </li>
+		</ul>
+		<ul class="navbar-nav">
+		    <li class="nav-item dropdown">
+				<a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					<span class="icon"><i class="fas fa-user"></i></span>
+					<span>Kiranmayi</span>
+				</a>
+	        	<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown" style="margin-top: 12px;">
+	          		<a class="dropdown-item" href="settings.jsp">Change Password</a>
+	          		<a class="dropdown-item" href="#">Manage stores</a>
+	          		<div class="dropdown-divider"></div>
+	          		<form action="LogoutServlet" method="get" id="logoutForm">
+	          			<a class="dropdown-item" onclick="fnLogout()">Log out</a>
+	          		</form>
+	        	</div>
+			</li>
+		</ul>
+	</nav>
+
+	<ul class="nav nav-tabs">
+		<li class="nav-item active"><a class="nav-link" href="#2a" data-toggle="tab" onclick="fnLoadAll()">Store Performance</a></li>
+		<li class="nav-item"><a class="nav-link" href="#2b" data-toggle="tab" onclick="fnLoadCountriesAndDepts()">Region Performance</a></li>
+	</ul><!-- fnLoadKpisData(); -->
+	<div class="tab-content clearfix">
+		<div class="tab-pane active" id="2a">
+			<div id="" class="periodSelector" style="text-align: right; margin:10px;">
+				<label for="period1">Period Selector</label>&nbsp;&nbsp;
+				<select id="period1" name="period1" onChange="fnLoadOverviewData(this); fnLoadOverviewProductData(this); fnLoadProductPerformanceCharts(this); fnLoadProductPerformance(this);"> 
+					<option value="DAY"> Day </option>
+					<option value="WEEK"> Week </option> 
+					<option value="MTD"> MTD </option>
+					<option value="YTD" selected> YTD </option>
+					<option value="2019"> 2019 </option>
+					<option value="2018"> 2018 </option>
+				</select>
+			</div>
+			<div class="cardKpis" id="overviewCardKpis">
+				<div id="kpiSpinner" class="spinner-purple" style="text-align:center"></div>
+				<div class="card-deck">
+					<div class="card mb-2">
+						<div class="cardBody">
+							<h4 class="card-title"><span id="Sales"></span> <sup> <i class=""></i> <small><span id="Sales_InDc"></span>%</small> </sup></h4>
+							<h6 class="card-text"><i class="fas fa-money-bill"></i> Sales</h6>
+						</div>
+					</div>
+					<div class="card mb-2">
+						<div class="cardBody">
+							<h4 class="card-title"><span id="New_Customer"></span>	<sup> <i class=""></i> <small><span id="New_Customer_InDc"></span>%</small> </sup></h4>
+							<h6 class="card-text"><i class="fas fa-user-plus"></i> New Customer</h6>
+						</div>
+					</div>
+					<div class="card mb-2">
+						<div class="cardBody">
+							<h4 class="card-title"><span id="Repeat_Customer"></span> <sup> <i class=""></i> <small><span id="Repeat_Customer_InDc"></span>%</small> </sup></h4>
+							<h6 class="card-text"><i class="fas fa-walking"></i> Repeat Customer</h6>
+						</div>
+					</div>
+					<div class="card mb-2">
+						<div class="cardBody">
+							<h4 class="card-title"><span id="Repeat_Order_Value"></span> <sup> <i class=""></i> <small><span id="ROV_InDc"></span>%</small> </sup></h4>
+							<h6 class="card-text"><i class="fas fa-sync"></i> Repeat Order Value</h6>
+						</div>
+					</div>
+					<div class="card mb-2">
+						<div class="cardBody">
+							<h4 class="card-title"><span id="Shipping"></span> <sup> <i class=""></i> <small><span id="Ship_InDc"></span>%</small> </sup></h4>
+							<h6 class="card-text"><i class="fas fa-shipping-fast"></i> Shipping</h6>
+						</div>
+					</div>
+					<div class="card mb-2">
+						<div class="cardBody">
+							<h4 class="card-title"><span id="Discount"></span> <sup> <i class=""></i> <small><span id="Disc_InDc"></span>%</small> </sup></h4>
+							<h6 class="card-text"><i class="fas fa-percent"></i> Discount</h6>
+						</div>
+					</div>
+				</div>
+				<br/>
+				<div class="card-deck">
+					<div class="card mb-2">
+						<div class="cardBody">
+							<h4 class="card-title"><span id="Orders"></span> <sup> <i class=""></i> <small><span id="Orders_InDc"></span>%</small> </sup></h4>
+							<h6 class="card-text"><i class="fa fa-shopping-cart"></i> Orders</h6>
+						</div>
+					</div>
+					<div class="card mb-2">
+						<div class="cardBody">
+							<h4 class="card-title"><span id="Item_Ordered"></span> <sup> <i class=""></i> <small><span id="IO_InDc"></span>%</small> </sup></h4>
+							<h6 class="card-text"><i class="fas fa-clipboard-check"></i> Items Ordered</h6>
+						</div>
+					</div>
+					<div class="card mb-2">
+						<div class="cardBody">
+							<h4 class="card-title"><span id="Return_Order"></span> <sup> <i class=""></i> <small><span id="Return_Order_InDc"></span>%</small> </sup></h4>
+							<h6 class="card-text"><i class="fas fa-people-carry"></i> Cancelled Orders</h6>
+						</div>
+					</div>
+					<!-- <div class="col-lg-2 col-md-2 col-sm-4 col-xs-4">
+						<div class="card border-info mb-2" style="height:100px">
+							<div class="cardBody">
+								<h4 class="card-title"><span id="Repeat_Order"></span> <sup> <i class=""></i> <small><span id="Repeat_Order_InDc"></span>%</small> </sup></h4>
+								<h6 class="card-text"><i class="fa fa-shopping-basket"></i> Repeat Order</h6>
+							</div>
+						</div>
+					</div> -->
+					<div class="card mb-2">
+						<div class="cardBody">
+							<h4 class="card-title"><span id="Average_order_value"></span> <sup> <i class=""></i> <small><span id="AOV_InDc"></span>%</small> </sup></h4>
+							<h6 class="card-text"><i class="fa fa-shopping-basket"></i> Avg Order Value</h6>
+						</div>
+					</div>
+					<div class="card mb-2">
+						<div class="cardBody">
+							<h4 class="card-title"><span id="ARPC"></span> <sup> <i class=""></i> <small><span id="ARPC_InDc"></span>%</small> </sup></h4>
+							<h6 class="card-text"><i class="fas fa-hand-holding-usd"></i> ARPC</h6>
+						</div>
+					</div>
+					<div class="card mb-2">
+						<div class="cardBody">
+							<h4 class="card-title"><span id="UPT"></span> <sup> <i class=""></i> <small><span id="UPT_InDc"></span>%</small> </sup></h4>
+							<h6 class="card-text"><i class="fas fa-list-ol"></i> UPT</h6>
+						</div>
+					</div>
+				</div>
+			</div>
+			<br/>
+			<div class="row">
+				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+				<div id="tblSpinner" class="spinner-purple" style="text-align:center"></div>
+					<table class="table table-hover table-bordered table-responsive" id="overviewProductTable">
+						<thead class="table-secondary">
+							<tr>
+								<th>Category Performance</th>
+								<th>Sales</th>
+								<th>Orders</th>
+								<th>Customers</th>
+								<th>New Customers</th>
+								<th>Repeat Customers</th>
+								<th>Cancelled Orders</th>
+							</tr>
+						</thead>
+						<tbody id="overviewProductTbody" style="width:fit-content">
+							
+						</tbody>
+					</table>
+				</div>
+				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6">
+					<div class="graph">
+						<div id="chart1Spinner" class="spinner-purple" style="text-align:center"></div>
+						<div id="chart1"> </div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12"> 
+					<h5 class="float-left">Store Product Rankings</h5>
+				</div>
+				<div id="imgDeckSpinner" class="spinner-purple" style="text-align:center"></div>
+				<div class="scrolling-wrapper-flexbox" id="productImgsDeck">
+				</div>
+			</div>
+		</div>
+		<div class="tab-pane" id="2b">
+			<br/>
+			<div class="selector">
+				<div class="row">
+					<div class="col-12 col-sm-12 col-md-12 col-lg-12 col-xl-12">
+					<label for="dropDown">Country</label>
+					<select id="country" onchange="fnGetStates()">
+						
+					</select>&nbsp;&nbsp;
+					<span id="spinnerForCountry"></span>&nbsp;&nbsp;
+					<label for="dropDown1">State</label>
+					<select id="state" onchange="fnGetCities()">
+						
+					</select>&nbsp;&nbsp;
+					<label for="dropDown2">City</label>
+					<select id="city">
+						
+					</select>&nbsp;&nbsp;
+					<label for="dropDown3">Department</label>
+					<select id="department" onchange="fnGetCategories()">
+						
+					</select>&nbsp;&nbsp;
+					<span id="spinnerForDepartment"></span>&nbsp;&nbsp;
+					<label for="dropDown4">Category</label>
+					<select id="category" >
+						
+					</select>&nbsp;&nbsp;
+					<label for="period2">Period</label>
+					<select id="period2" name="period2"> 
+						<option value="DAY"> Day </option>
+						<option value="WEEK"> Week </option> 
+						<option value="MTD"> MTD </option>
+						<option value="YTD" selected> YTD </option>
+						<option value="2019"> 2019 </option>
+						<option value="2018"> 2018 </option>
+					</select>&nbsp;&nbsp;
+					<input type="button" value="Apply Filters" id="applyFiltersBtn" onclick="fnLoadRPKpisData(); fnLoadRegionPerfTable(); fnLoadRPCustSalesChannels(); fnLoadRPSalesTrendChart();"/>
+					</div>
+				</div>
+			</div>
+			<br/>
+			<div class="row">
+				<div class="col-lg-4 col-md-4 col-sm-6 col-xs-6 ">
+					<div class="cardKpis" id="rpCardKpis">
+						<div id="rpKpiSpinner" class="spinner-purple" style="text-align:center"></div>
+						<div id="rpKpiStatusMessage" align="center"></div>
+						<div class="card-deck">
+							<div class="card mb-2">
+								<div class="cardBody">
+									<h4 class="card-title"><span id="rpSales"></span> <sup> <i class=""></i> <small><span id="rpSales_InDc"></span>%</small> </sup></h4>
+									<h6 class="card-text"><i class="fas fa-money-bill"></i> Sales</h6>
+								</div>
+							</div>
+							<div class="card mb-2">
+								<div class="cardBody">
+									<h4 class="card-title"><span id="rpTotal_Customer"></span>	<sup> <i class=""></i> <small><span id="rpTotal_Customer_InDc"></span>%</small> </sup></h4>
+									<h6 class="card-text"><i class="fas fa-user-plus"></i> Total Customer</h6>
+								</div>
+							</div>
+						</div>
+						<br/>
+						<div class="card-deck">
+							<div class="card mb-2">
+								<div class="cardBody">
+									<h4 class="card-title"><span id="rpOrders"></span> <sup> <i class=""></i> <small><span id="rpOrders_InDc"></span>%</small> </sup></h4>
+									<h6 class="card-text"><i class="fa fa-shopping-cart"></i> Orders</h6>
+								</div>
+							</div>
+							<div class="card mb-2">
+								<div class="cardBody">
+									<h4 class="card-title"><span id="rpReturn_Order"></span> <sup> <i class=""></i> <small><span id="rpReturn_Order_InDc"></span>%</small> </sup></h4>
+									<h6 class="card-text"><i class="fas fa-people-carry"></i> Cancelled Orders</h6>
+								</div>
+							</div>
+						</div>
+						<br/>
+						<div class="card-deck">
+							<div class="card mb-2">
+								<div class="cardBody">
+										<h4 class="card-title"><span id="rpRepeat_Order"></span> <sup> <i class=""></i> <small><span id="rpRepeat_Order_InDc"></span>%</small> </sup></h4>
+										<h6 class="card-text"><i class="fa fa-shopping-basket"></i> Repeat Order</h6>
+									</div>
+							</div>
+							<div class="card mb-2">
+								<div class="cardBody">
+									<h4 class="card-title"><span id="rpRepeat_Order_Value"></span> <sup> <i class=""></i> <small><span id="rpROV_InDc"></span>%</small> </sup></h4>
+									<h6 class="card-text"><i class="fas fa-sync"></i> Repeat Order Value</h6>
+								</div>
+							</div>
+						</div>
+						<br/>
+						<div class="card-deck">
+							<div class="card mb-2">
+								<div class="cardBody">
+									<h4 class="card-title"><span id="rpARPC"></span> <sup> <i class=""></i> <small><span id="rpARPC_InDc"></span>%</small> </sup></h4>
+									<h6 class="card-text"><i class="fas fa-hand-holding-usd"></i> ARPC</h6>
+								</div>
+							</div>
+							<div class="card mb-2">
+								<div class="cardBody">
+									<h4 class="card-title"><span id="rpUPT"></span> <sup> <i class=""></i> <small><span id="rpUPT_InDc"></span>%</small> </sup></h4>
+									<h6 class="card-text"><i class="fas fa-list-ol"></i> UPT</h6>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-lg-8 col-md-8 col-sm-6 col-xs-6">
+					<div id="rpTblSpinner" class="spinner-purple" style="text-align:center"></div>
+					<div id="rpTblDivStatusMessage" align="center"></div>
+					<div  id="regionPerTbl"></div>
+				</div>
+			</div>
+			<br/>
+			<div class="row">
+				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+					<div id="rpChart3Spinner" class="spinner-purple" style="text-align:center"></div>
+					<div id="rpChart3StatusMessage" align="center"></div>
+					<div id="chart3"> </div>
+				</div>
+				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+					<div id="rpChart4Spinner" class="spinner-purple" style="text-align:center"></div>
+					<div id="rpChart4StatusMessage" align="center"></div>
+					<div id="chart4"> </div>
+				</div>
+				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-4">
+					<div id="rpChart5Spinner" class="spinner-purple" style="text-align:center"></div>
+					<div id="rpChart5StatusMessage" align="center"></div>
+					<div id="chart5"> </div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<footer class="footer navbar-fixed-bottom">
+		<small>&copy;2020 Devise Math Solutions. &nbsp;&nbsp; All Rights Reserved.</small>
+</footer>
+</body>
+</html>

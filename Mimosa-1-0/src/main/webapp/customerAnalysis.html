@@ -1,0 +1,1579 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	
+	<!-- <link rel="stylesheet" href="bootstrap-4.0.0-dist/css/bootstrap.css"/> -->
+	<link rel="stylesheet" href="bootstrap-4.4.1-dist/css/bootstrap.css">
+	<link rel="stylesheet" href="fontawesome-free-5.13.0-web/css/all.css"/>
+	
+	<script src = "https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"> </script>
+	<script src="bootstrap-4.0.0-dist/js/bootstrap.js"></script>
+	
+	<script src = "https://code.highcharts.com/highcharts.js"></script>  
+	<script src="https://code.highcharts.com/modules/heatmap.js"></script>
+	<script src="https://code.highcharts.com/modules/export-data.js"></script>
+	<script src="https://code.highcharts.com/modules/accessibility.js"></script>
+	
+	<script src="js/jquery-3.4.1.min.js"></script>
+	
+	<title>Customer Analysis</title>	
+	<style>
+	.spinner-purple
+	{
+		color: #7851a1;
+	}
+	.cardSegments
+	{
+		margin: 30px 80px 30px 80px;
+	}
+	.cardSegments .card
+	{
+		border: 1px solid #7851a1;
+	}
+	.card-title
+	{
+		text-align: center;	
+	}
+	.card-body
+	{
+		text-align: center;
+		padding: 0.5rem !important;
+	}
+	.card-text
+	{
+		text-align: center;
+		padding-top: inherit;
+	}
+	.card-text div span
+	{
+		text-align: start;
+	}
+	.card-text i
+	{
+    	color: #f7931f;
+	}
+	.nav-tabs
+	{
+		background-color: #efefef;
+	}
+	.table
+	{
+		vertical-align: middle;
+	}
+	#barChartContainer
+	{
+		margin: 30px 60px 30px 60px;
+	}
+	#bar-chart1, #bar-chart2, #bar-chart3, #bar-chart4
+	{
+		border: 1px solid rgba(0, 0, 0, 0.125);
+		border-radius: 5px;
+		height: 450px;
+	}
+	#chart1, #chart2, #chart3, #chart4, #chart5, #chart6, #chart9, #chart10, #chart11, #chart12, #chart13, #chart14
+	{
+		height: 300px;
+	}
+	#chart7, #chart8
+	{
+		height: 450px;
+	}
+	#buttons
+	{
+		line-height: 100px;
+	}
+	.modal-dialog
+	{
+		max-width: 90%;
+		overflow-x: hidden;
+		overflow-y: auto;
+	}
+	.define
+	{
+		border: 1px solid #DEDEDE;
+		padding: inherit;
+	}
+	#tbl1
+	{
+		line-height: 40px;
+		width: 100%;
+	}
+	#tbl1 tr td
+	{
+		border: 1px solid #DEDEDE;
+		text-align: center;
+	}
+	#tbl2
+	{
+		line-height: 40px;
+		width: 100%;
+	}
+	#tbl2 tr td
+	{
+		border: 1px solid #DEDEDE;
+		text-align: center;
+	}
+	.footer
+	{
+		bottom: 15px;
+		position: inherit;
+		text-align: center;
+		width:100%;
+	}
+	</style>
+<script>
+	function fnLogout()
+	{
+		$("#logoutForm").submit();
+	}
+	function fnLoadSegmentationData()
+	{
+		$("#cardSegmentsSpinner").html("<div class='spinner-border spinner-border-sm spinner-purple'></div>");
+		$("#bar-chart1Spinner").html("<div class='spinner-border spinner-border-sm spinner-purple'></div>");
+		$("#bar-chart2Spinner").html("<div class='spinner-border spinner-border-sm spinner-purple'></div>");
+		$("#bar-chart3Spinner").html("<div class='spinner-border spinner-border-sm spinner-purple'></div>");
+		$("#bar-chart4Spinner").html("<div class='spinner-border spinner-border-sm spinner-purple'></div>");
+		$.post(
+		{
+			url: "SegmentationServlet",
+			success: function(data)
+			{
+				fnPopulateSegmentData(data);
+				fnPopulateGraphs(data);
+				$("#cardSegmentsSpinner").html("");
+				$("#bar-chart1Spinner").html("");
+				$("#bar-chart2Spinner").html("");
+				$("#bar-chart3Spinner").html("");
+				$("#bar-chart4Spinner").html("");
+			}
+		});
+	}
+	function fnPopulateSegmentData(data)
+	{
+		var sd = $(data).find("SegmentationDetails");
+		for(i=0; i<sd.length; i++)
+		{
+			var sName = $(sd[i]).find("Segment").text();
+			switch(sName)
+			{
+				case "1_New_Customer": 
+					$("#newCustomerOT").html($(sd[i]).find("OrderTimes").text());
+					$("#newCustomerVT").html($(sd[i]).find("ValueTimes").text());
+					$("#newCustomerCustomers").html($(sd[i]).find("Customers").text());
+					$("#newCustomerSales").html($(sd[i]).find("Sales").text());
+					$("#newCustomerTenure").html($(sd[i]).find("Tenure").text());
+				break;
+				case "2_Champions": 
+					$("#championsOT").html($(sd[i]).find("OrderTimes").text());
+					$("#championsVT").html($(sd[i]).find("ValueTimes").text());
+					$("#championsCustomers").html($(sd[i]).find("Customers").text());
+					$("#championsSales").html($(sd[i]).find("Sales").text());
+					$("#championsTenure").html($(sd[i]).find("Tenure").text());
+				break;
+				case "3_Loyalists": 
+					$("#loyalistsOT").html($(sd[i]).find("OrderTimes").text());
+					$("#loyalistsVT").html($(sd[i]).find("ValueTimes").text());
+					$("#loyalistsCustomers").html($(sd[i]).find("Customers").text());
+					$("#loyalistsSales").html($(sd[i]).find("Sales").text());
+					$("#loyalistsTenure").html($(sd[i]).find("Tenure").text());
+				break;
+				case "4_Potentials": 
+					$("#potentialsOT").html($(sd[i]).find("OrderTimes").text());
+					$("#potentialsVT").html($(sd[i]).find("ValueTimes").text());
+					$("#potentialsCustomers").html($(sd[i]).find("Customers").text());
+					$("#potentialsSales").html($(sd[i]).find("Sales").text());
+					$("#potentialsTenure").html($(sd[i]).find("Tenure").text());
+				break;
+				case "5_Shouldnt_Lose": 
+					$("#shouldntLoseOT").html($(sd[i]).find("OrderTimes").text());
+					$("#shouldntLoseVT").html($(sd[i]).find("ValueTimes").text());
+					$("#shouldntLoseCustomers").html($(sd[i]).find("Customers").text());
+					$("#shouldntLoseSales").html($(sd[i]).find("Sales").text());
+					$("#shouldntLoseTenure").html($(sd[i]).find("Tenure").text());
+				break;
+				case "6_Need_Attention": 
+					$("#needAttentionOT").html($(sd[i]).find("OrderTimes").text());
+					$("#needAttentionVT").html($(sd[i]).find("ValueTimes").text());
+					$("#needAttentionCustomers").html($(sd[i]).find("Customers").text());
+					$("#needAttentionSales").html($(sd[i]).find("Sales").text());
+					$("#needAttentionTenure").html($(sd[i]).find("Tenure").text());
+				break;
+				case "7_Almost_Lost": 
+					$("#almostLostOT").html($(sd[i]).find("OrderTimes").text());
+					$("#almostLostVT").html($(sd[i]).find("ValueTimes").text());
+					$("#almostLostCustomers").html($(sd[i]).find("Customers").text());
+					$("#almostLostSales").html($(sd[i]).find("Sales").text());
+					$("#almostLostTenure").html($(sd[i]).find("Tenure").text());
+				break;
+				case "8_Sleepers": 
+					$("#sleepersOT").html($(sd[i]).find("OrderTimes").text());
+					$("#sleepersVT").html($(sd[i]).find("ValueTimes").text());
+					$("#sleepersCustomers").html($(sd[i]).find("Customers").text());
+					$("#sleepersSales").html($(sd[i]).find("Sales").text());
+					$("#sleepersTenure").html($(sd[i]).find("Tenure").text());
+				break;
+			}
+		}
+	}
+	function fnPopulateGraphs(data)
+	{
+		setTimeout(function()
+		{
+			var plotOptionsBarChart = {
+				bar: 
+				{
+					dataLabels: 
+					{
+						enabled: true,
+						crop: false,
+	                    overflow: 'none',
+	                    style:
+				    	{
+				    		textOutline: false,
+				    		fontWeight: 20,
+				    		fontSize: '1.0em'
+				    	}
+					},
+					pointWidth:30
+			}};
+			var legendBarChart1 = {
+				enabled: false
+			};
+			var creditsBarChart = {
+				enabled: false
+			};
+			var sd = $(data).find("SegmentationDetails");
+					
+			var dataArray1=[], dataArray2=[], dataArray3=[], dataArray4=[], categoriesBarChart=[]; 
+			
+			for(i=0; i<sd.length; i++)
+			{
+				dataArray1[i] = parseFloat($(sd[i]).find("ARPC").text());
+				dataArray2[i] = parseFloat($(sd[i]).find("AOV").text());
+				dataArray3[i] = parseFloat($(sd[i]).find("UPT").text());
+				dataArray4[i] = $(sd[i]).find("CLV").text();
+				categoriesBarChart[i] = $(sd[i]).find("Segment").text().replace(/[^A-Za-z]/g, ' ');
+			}
+			console.info("DA4: "+dataArray4);
+			Highcharts.setOptions({
+				lang: 
+				{
+					//numericSymbols: ["K", "M", "B", "T", "P", "E"],
+					thousandsSep: ','
+				}
+			})	
+			Highcharts.chart('bar-chart1', 
+			{
+				chart: 
+				{
+					type: 'bar'
+				},
+				title: 
+				{
+					text: 'ARPC'
+				},
+				xAxis: 
+				{
+					categories: categoriesBarChart,
+					title: 
+					{
+						text: null
+					},
+					gridLineWidth: 0
+				},
+				yAxis: 
+				{
+					type: 'logarithmic',
+					labels: 
+					{
+						overflow: 'justify'
+					},
+					title: 
+					{
+						text: null
+					},
+					gridLineWidth: 0
+				},
+				plotOptions: plotOptionsBarChart,
+				legend: legendBarChart1,
+				credits: creditsBarChart,
+				tooltip:
+				{
+					valuePrefix: 'Rs'
+				},
+				series: 
+				[{
+					name: 'ARPC',
+					data: dataArray1,
+					color: '#7851a1',
+					dataLabels: 
+					{
+						formatter:function() 
+					    {
+							return 'Rs' + ' ' + this.y;
+					    }
+					}
+				}]
+			});
+			Highcharts.chart('bar-chart2',
+			{
+				chart: 
+				{
+					type: 'bar'
+				},
+				title: 
+				{
+					text: 'AOV'
+				},
+				xAxis: 
+				{
+					categories: categoriesBarChart,
+					title: 
+					{
+						text: null
+					},
+					gridLineWidth: 0
+				},
+				yAxis: 
+				{
+					type: 'logarithmic',
+					labels: 
+					{
+						overflow: 'justify'
+					},
+					title: 
+					{
+						text: null
+					},
+					gridLineWidth: 0
+				},
+				tooltip:
+				{
+					valuePrefix: 'Rs'
+				},
+				plotOptions: plotOptionsBarChart,
+				legend: legendBarChart1,
+				credits: creditsBarChart,
+				series: 
+				[{
+					name: 'AOV',
+					data: dataArray2,
+					color: '#f7931f',
+					dataLabels: 
+					{
+						formatter:function() 
+					    {
+							return 'Rs' + ' ' + this.y;
+					    }
+					}
+				}]
+			});
+			Highcharts.chart('bar-chart3',
+			{
+				chart: 
+				{
+					type: 'bar'
+				},
+				title: 
+				{
+					text: "UPT"
+				},
+				xAxis: 
+				{
+					categories: categoriesBarChart,
+					title: 
+					{
+						text: null
+					},
+					gridLineWidth: 0
+				},
+				yAxis: 
+				{
+					labels: 
+					{
+						overflow: 'justify'
+					},
+					title: 
+					{
+						text: null
+					},
+					gridLineWidth: 0
+				},
+				plotOptions: plotOptionsBarChart,
+				legend: legendBarChart1,
+				credits: creditsBarChart,
+				series: 
+				[{
+					name: 'UPT',
+					data: dataArray3,
+					color: '#7851a1'
+				}]
+			});
+			Highcharts.chart('bar-chart4',
+			{
+				chart: 
+				{
+					type: 'bar',
+					events: 
+					{
+						load: function() 
+						{
+					    	var chart = this,
+					        categoryWidth = this.plotWidth / this.xAxis[0].categories.length;
+							this.series[0].points.forEach(function(point) 
+							{
+					        	if (point.y === null) 
+					        	{
+					            	var offset = point.plotX * categoryWidth + categoryWidth / 2,
+					            	text = chart.renderer.text('N/A', 0, 0).add();
+									text.attr(
+									{
+					            		x: point.plotX + chart.plotLeft - 10,
+					            		y: chart.plotTop + chart.plotHeight - 10
+					            	});
+					          	}
+					        });
+						}
+					}
+				},
+				title: 
+				{
+					text: "CLV"
+				},
+				xAxis: 
+				{
+					categories: categoriesBarChart,
+					title: 
+					{
+						text: null
+					},
+					gridLineWidth: 0
+				},
+				yAxis: 
+				{
+					labels: 
+					{
+						overflow: 'justify'
+					},
+					title: 
+					{
+						text: null
+					},
+					gridLineWidth: 0
+				},
+				tooltip:
+				{
+					valuePrefix: 'Rs'
+				},
+				plotOptions: plotOptionsBarChart,
+				legend: legendBarChart1,
+				credits: creditsBarChart,
+				series: 
+				[{
+					name: 'CLV',
+					//data: dataArray4,
+					data: [null, null, 30996.7, null, 49798, 12000.2, 7643, 3274],
+					color: '#f7931f',
+					dataLabels: 
+					{
+						formatter:function() 
+					    {
+							return 'Rs' + ' ' + this.y;
+					    }
+					}
+				}]
+			});
+			fnFormatNumbers("bar-chart1");
+			fnFormatNumbers("bar-chart2");
+			fnFormatNumbers("bar-chart4");
+		},100);
+	}
+	function fnFormatNumbers(objName)
+	{
+		var o = $("#"+objName);
+		var text = $(o).find(".highcharts-data-label").find("text");
+		for(i=0; i<text.length; i++)
+		{
+			var num = $(text[i]).text();
+			if(num.startsWith("Rs"))
+			{
+				num = num.split(" ")[1];
+			}
+			var count = -1;
+			var temp = parseFloat(num);
+			while(temp>1)
+			{
+				temp = temp / 1000;
+				count++;
+			}
+			temp = temp * 1000;
+			temp = temp.toPrecision(3);
+			var temp2 = "";
+			if(count==0)
+			{
+				temp2 = temp;
+			}
+			if(count == 1)
+			{
+				temp2 = temp + "K";
+			}
+			else if(count == 2)
+			{
+				temp2 = temp + "M";
+			}
+			else if(count == 3)
+			{
+				temp2 = temp + "B";
+			}
+			$(text[i]).html(temp2);	
+		}
+	}
+	function fnLoadChurnEvolution()
+	{
+		$("#churnChart1Spinner").html("<div class='spinner-border spinner-border-sm spinner-purple'></div>");
+		$.post(
+		{
+			url: "ChurnEvolutionServlet",
+			success: function(data)
+			{
+				fnPopulateChurnEvolution(data);
+				$("#churnChart1Spinner").html("");
+			},
+			error: function(error)
+			{
+				alert(error);
+			}
+		});
+	}
+	function fnPopulateChurnEvolution(data)
+	{ 
+		setTimeout(function()
+		{
+			var category = $(data).find("TenureBucket");
+						
+			var dataArray=[], XcategoryNames=[]; 
+			var seriesObj = [];
+			var monthEnd=[];
+			for(i=0; i<category.length; i++)
+			{
+				XcategoryNames[i] = $(category[i]).attr("id");
+				//console.info("XCN: "+XcategoryNames[i]);
+				var series = [];
+				series = $(category[i]).find("Series");
+				//console.info("series l: "+series.length);
+				var churnRate=[];
+				for(j=0; j<series.length; j++)
+				{
+					monthEnd[j]= $(series[j]).find("Monthend").text();
+					churnRate[j] = parseFloat($(series[j]).find("ChurnRate").text());
+				}
+				var obj = new Object();
+				obj.name = XcategoryNames[i];
+				obj.data = churnRate;
+				//console.info("obj: "+obj)
+				seriesObj[i]=obj; 
+			}
+			//console.info("seriesObj: "+seriesObj);
+			Highcharts.setOptions({
+				lang: 
+				{
+					//numericSymbols: ["K", "M", "B", "T", "P", "E"],
+					thousandsSep: ','
+				}
+			})
+			Highcharts.chart('churnChart1', 
+			{
+				title: 
+				{
+					text: 'Churn rate evolution by tenure',
+					x: 0 //center
+				},
+				subtitle: 
+				{
+					text: null
+				},
+				xAxis: 
+				{
+					title: 
+					{
+				    	text: null
+					},
+					//categories: ["Dec", "Jan", "Feb", "Mar", "Apr"],
+					categories: monthEnd,
+					lineWidth: 1
+				},
+				yAxis: 
+				{
+					title: 
+					{
+				    	text: null
+					},
+					min: 0,
+					gridLineWidth: 0,
+					allowDecimals: false
+				},
+				legend: 
+				{
+					layout: 'horizontal',
+					align: 'center',
+					verticalAlign: 'top'
+				},
+				credits:
+				{
+					enabled: false
+				},
+	    		tooltip:
+	    		{
+	    			valueSuffix: '%'
+	    		},
+				plotOptions: 
+				{
+					series: 
+					{
+						/* label: 
+						{
+				        	connectorAllowed: true
+						}, */
+						dataLabels:
+						 {
+						 	shadow:false,
+							enabled: true,
+						    inside: true,
+						    style:
+					    	{
+					    		textOutline: false,
+					    		fontWeight: 20,
+					    		fontSize: '1.0em'
+					    	},
+						    formatter:function() 
+						    {
+				            	return this.y + ' ' + '%';
+						    }
+						 }
+					}
+				},
+				series: seriesObj
+			});
+		},290);
+	}
+	function fnLoadChurnRevenueLost()
+	{
+		$("#churnRevLostChartSpinner").html("<div class='spinner-border spinner-border-sm spinner-purple'></div>");
+		$.post(
+		{
+			url: "ChurnRevenueLostServlet",
+			success: function(data)
+			{
+				fnPopulateChurnRevenueLost(data);
+				$("#churnRevLostChartSpinner").html("");
+			},
+			error: function(error)
+			{
+				alert(error);
+			}
+		});
+	}
+	function fnPopulateChurnRevenueLost(data)
+	{ 
+		setTimeout(function()
+		{
+			var category = $(data).find("Segments");
+						
+			var dataArray=[], XcategoryNames=[]; 
+			var seriesObj = [];
+			var monthEnd=[];
+			
+			for(i=0; i<category.length; i++)
+			{
+				XcategoryNames[i] = $(category[i]).attr("id");
+				//console.info("XCN: "+XcategoryNames[i]);
+				var series = [];
+				series = $(category[i]).find("Series");
+				//console.info("series l: "+series.length);
+				var churn=[], revLoss=[];
+				for(j=0; j<series.length; j++)
+				{
+					//monthEnd[j]= $(series[j]).find("Monthend").text();
+					churn[j] = parseFloat($(series[j]).find("Churn").text());
+					revLoss[j] = parseFloat($(series[j]).find("RevenueLoss").text());
+				}
+				var obj = new Object();
+				obj.name = XcategoryNames[i];
+				var tempDA = [];
+				tempDA[0] = churn;
+				tempDA[1] = revLoss;
+				obj.data = tempDA;
+				console.info("obj: "+obj)
+				seriesObj[i]=obj; 
+			}
+			//console.info("seriesObj: "+seriesObj);
+			Highcharts.setOptions({
+				lang: 
+				{
+					//numericSymbols: ["K", "M", "B", "T", "P", "E"],
+					thousandsSep: ','
+				}
+			})
+			/* Highcharts.chart('churnRevLostChart', 
+			{
+				title: 
+				{
+					text: 'Revenue loss due to churn',
+					x: -20 //center
+				},
+				subtitle: 
+				{
+					text: null
+				},
+				xAxis: 
+				{
+					title: 
+					{
+				    	text: null
+					},
+					categories: ["Churners", "Revenue Loss"],
+					//categories: monthEnd,
+					lineWidth: 1
+				},
+				yAxis: 
+				{
+					title: 
+					{
+				    	text: null
+					},
+					min: 0,
+					gridLineWidth: 0,
+					allowDecimals: false
+				},
+				legend: 
+				{
+					layout: 'vertical',
+					align: 'right',
+					verticalAlign: 'middle'
+				},
+				credits:
+				{
+					enabled: false
+				},
+	    		tooltip:
+	    		{
+	    			valueSuffix: '%'
+	    		},
+				plotOptions: 
+				{
+					series: 
+					{
+						label: 
+						{
+				        	connectorAllowed: true
+						},
+						dataLabels:
+						 {
+						 	shadow:false,
+							enabled: true,
+						    inside: true,
+						    style:
+					    	{
+					    		textOutline: false,
+					    		fontWeight: 20,
+					    		fontSize: '1.0em'
+					    	},
+						    formatter:function() 
+						    {
+				            	return this.y + ' ' + '%';
+						    }
+						 }
+					}
+				},
+				series: seriesObj
+			}); */
+			Highcharts.chart('churnRevLostChart', 
+			{
+				chart: 
+			    {
+			        type: 'column'
+			    },
+				title: 
+				{
+					text: 'Revenue loss due to churn',
+					x: -20 //center
+				},
+				subtitle: 
+				{
+					text: null
+				},
+				xAxis: 
+				{
+					title: 
+					{
+				    	text: null
+					},
+					categories: ['Churners', 'Revenue Loss'],
+					//categories: monthEnd,
+					lineWidth: 1
+				},
+				yAxis: 
+				{
+					title: 
+					{
+				    	text: null
+					},
+					min: 0,
+					gridLineWidth: 0,
+					allowDecimals: false,
+					labels: 
+			        {
+			            enabled: false
+			        }
+				},
+				legend: 
+				{
+					layout: 'vertical',
+					align: 'right',
+					verticalAlign: 'middle'
+				},
+				credits:
+				{
+					enabled: false
+				},
+	    		tooltip:
+	    		{
+	    			valueSuffix: '%'
+	    		},
+				plotOptions: 
+				{
+					series: 
+					{
+						dataLabels:
+						 {
+						 	shadow:false,
+							enabled: true,
+						    inside: true,
+						    style:
+					    	{
+					    		textOutline: false,
+					    		fontWeight: 20,
+					    		fontSize: '1.0em'
+					    	},
+						    formatter:function() 
+						    {
+						    	if (this.y != 0) 
+						    	{
+						    		return this.y + ' ' + '%';
+								}
+				            	
+						    }
+						 }
+					}
+				},
+				plotOptions: 
+			    {
+			        column: 
+			        {
+			            stacking: 'percent',
+			            dataLabels: 
+					    {
+			            	shadow:false,
+							enabled: true,
+						    inside: true,
+						    style:
+					    	{
+					    		textOutline: false,
+					    		fontWeight: 20,
+					    		fontSize: '1.0em'
+					    	},
+						    formatter:function() 
+						    {
+						    	if (this.y != 0) 
+						    	{
+						    		return this.y + ' ' + '%';
+								}
+						    }          
+					    },
+					    showInLegend: true
+			        }
+			    },
+				series: seriesObj
+				/* series: 
+				    [{
+				    	name: 'Seg_Nmae',
+				    	data: [3, 30.2]
+				    }, 
+				    {
+				    	name: 'Seg_Nmae',
+				        data: [8.4, 29.1]
+				    }, 
+				    {
+				    	name: 'Seg_Nmae',
+				        data: [16.2, 24.2]
+				    }, 
+				    {
+				    	name: 'Seg_Nmae',
+				        data: [43.3, 16.5]
+				    }, 
+				    {
+				    	name: 'Seg_Nmae',
+				        data: [29, 0]
+				    }] */
+			});
+		},290);
+	}
+	function fnLoadChurnSegmentation()
+	{
+		$("#churnChart2Spinner").html("<div class='spinner-border spinner-border-sm spinner-purple'></div>");
+		$("#churnChart3Spinner").html("<div class='spinner-border spinner-border-sm spinner-purple'></div>");
+		$("#churnChart4Spinner").html("<div class='spinner-border spinner-border-sm spinner-purple'></div>");
+		$.post(
+		{
+			url: "ChurnSegmentationServlet",
+			success: function(data)
+			{
+				fnPopulateChurnSegmentation(data);
+				$("#churnChart2Spinner").html("");
+				$("#churnChart3Spinner").html("");
+				$("#churnChart4Spinner").html("");
+			},
+			error: function(error)
+			{
+				alert(error);
+			}
+		});
+	}
+	function fnPopulateChurnSegmentation(data)
+	{
+		setTimeout(function()
+		{
+			//var fetchCR = $(data).find("FetchChurnRate");
+			var tb = $(data).find("TenureBucket");
+			var XCategoryNames=[], YCategoryNames=[], dataArray1=[], dataArray2=[], dataArray3=[];
+			var k=0;
+			for(i=0; i<tb.length; i++)
+			{
+				var xcName = $(tb[i]).attr("id").substring(2);
+				XCategoryNames[i] = xcName;
+				var d = $(tb[i]).find("Data");
+				for(j=0; j<6; j++)
+				{
+					var name = $(d[j]).find("Segments").text().replace(/[^A-Za-z]/g, ' ');
+					YCategoryNames[j]=name;
+					var cr = parseFloat($(d[j]).find("ChurnRate").text());
+					var perCust = parseFloat($(d[j]).find("PerCustomer").text());
+					var perChurn = parseFloat($(d[j]).find("PerChurned").text());
+					
+					var dataArrayX=[], dataArrayY=[], dataArrayZ=[];
+					dataArrayX[0] = i;
+					dataArrayX[1] = j;
+					dataArrayX[2] = perCust;
+					dataArray1[k] = dataArrayX;
+					
+					dataArrayY[0] = i;
+					dataArrayY[1] = j;
+					dataArrayY[2] = perChurn;
+					dataArray2[k] = dataArrayY;
+					
+					dataArrayZ[0] = i;
+					dataArrayZ[1] = j;
+					dataArrayZ[2] = cr;
+					dataArray3[k] = dataArrayZ;
+					k++;
+				}
+			}
+			var r=0;
+			for(p=2; p<tb.length; p++)
+			{
+				var xcName = $(tb[p]).attr("id").substring(2);
+				XCategoryNames[p] = xcName;
+				var d = $(tb[p]).find("Data");
+				for(q=0; q<6; q++)
+				{
+					var name = $(d[q]).find("Segments").text().replace(/[^A-Za-z]/g, ' ');
+					YCategoryNames[q]=name;
+					var cr = parseFloat($(d[q]).find("ChurnRate").text());
+					var perChurn = parseFloat($(d[q]).find("PerChurned").text());
+					
+					var dataArrayY=[], dataArrayZ=[];
+					dataArrayY[0] = p;
+					dataArrayY[1] = q;
+					dataArrayY[2] = perChurn;
+					dataArray2[r] = dataArrayY;
+					
+					dataArrayZ[0] = p;
+					dataArrayZ[1] = q;
+					dataArrayZ[2] = cr;
+					dataArray3[r] = dataArrayZ;
+					r++;
+				}
+			}
+			
+			var accessmap = {
+				point: 
+			    {
+			    	descriptionFormatter: function (point) 
+			        {
+			        	var ix = point.index + 1,
+			        	xName = getPointCategoryName(point, 'x'),
+			            yName = getPointCategoryName(point, 'y'),
+			            val = point.value;
+			            return ix + '. ' + xName + ' sales ' + yName + ', ' + val + '.';
+					}
+				}
+			};
+			var legendmap = {
+				enabled: false
+		    };
+			var creditsmap = {
+				enabled: false
+		    };
+			var responsivemap = {
+				rules: 
+			    [{
+			    	condition: 
+			        {
+			        	maxWidth: 400
+					},
+			        chartOptions: 
+			        {
+			        	yAxis: 
+			            {
+			            	labels: 
+			                {
+			                	formatter: function () 
+			                    {
+			                    	return this.value;
+								}
+							}
+						}
+					}
+				}]
+			};
+			var tooltipmap = {
+				formatter: function () 
+			    {
+			    	return '<b>' + this.point.value + '</b> % <br>';
+				}
+			};
+			var datalabelsmap = {
+				enabled: true,
+		        shadow:false,
+		        color: '#000000',
+		        style:
+			    {
+			    	textOutline: false,
+			    	fontWeight: 20,
+			    	fontSize: '1.0em'
+			    },
+		        formatter:function() 
+			    {
+	            	return this.point.value + ' ' + '%';
+			    }
+			};
+			function getPointCategoryName(point, dimension) 
+			{
+				var series = point.series,
+			    isY = dimension === 'y',
+			    axis = series[isY ? 'yAxis' : 'xAxis'];
+			    return axis.categories[point[isY ? 'y' : 'x']];
+			}
+			Highcharts.chart('churnChart2', {
+				chart: 
+				{
+			        type: 'heatmap',
+			        plotBorderWidth: 1
+			    },
+				title: 
+				{
+			        text: 'Customer Base Distribution',
+			        x: 50
+			    },
+				xAxis: 
+			    {
+			        categories: XCategoryNames,
+			        title:
+			        {
+			        	text: 'Tenure'
+			        }
+			    },
+				yAxis: 
+				{
+			        categories: YCategoryNames,
+			        title: null,
+			        reversed: true
+			    },
+				accessibility: accessmap,
+				colorAxis: 
+				{
+			        min: 0,
+			        minColor: '#FFFFFF',
+			        maxColor: Highcharts.getOptions().colors[7]
+			    },
+				tooltip: tooltipmap,
+			    
+			    
+				legend: legendmap,
+			    credits: creditsmap,
+				series: 
+				[{
+			    	name: '% Base',
+			    	borderWidth: 1,
+	    		    borderColor: Highcharts.getOptions().colors[7],
+			        data: dataArray1,
+			       	dataLabels: datalabelsmap
+			    }],
+				responsive: responsivemap
+			});
+			Highcharts.chart('churnChart3', {
+				chart: 
+				{
+			        type: 'heatmap',
+			        plotBorderWidth: 1
+			    },
+				title: 
+				{
+			        text: "Churners Distribution",
+			        x: 50
+			    },
+				xAxis: 
+			    {
+			        categories: XCategoryNames,
+			        title:
+			        {
+			        	text: 'Tenure'
+			        }
+			    },
+				yAxis: 
+				{
+			        categories: YCategoryNames,
+			        title: null,
+			        reversed: true
+			    },
+				accessibility: accessmap,
+				colorAxis: 
+				{
+			        min: 0,
+			        minColor: '#FFFFFF',
+			        maxColor: Highcharts.getOptions().colors[7]
+			    },
+				legend: legendmap,
+				//tooltip: tooltipmap,
+				tooltip: {enabled: false},
+			    credits: creditsmap,
+				series: 
+				[{
+			    	name: '% Churners',
+			    	borderWidth: 1,
+	    		    borderColor: Highcharts.getOptions().colors[7],
+			        data: dataArray2,
+			        dataLabels: datalabelsmap
+			    }],
+				responsive: responsivemap
+			});
+			Highcharts.chart('churnChart4', {
+				chart: 
+				{
+			        type: 'heatmap',
+			        plotBorderWidth: 1
+			    },
+				title: 
+				{
+			        text: "Churn % per bracket",
+			        x: 50
+			    },
+				xAxis: 
+			    {
+			        categories: XCategoryNames,
+			        title:
+			        {
+			        	text: 'Tenure'
+			        }
+			    },
+				yAxis: 
+				{
+			        categories: YCategoryNames,
+			        title: null,
+			        reversed: true
+			    },
+				accessibility: accessmap,
+				colorAxis: 
+				{
+			        min: 0,
+			        minColor: '#FFFFFF',
+			        maxColor: Highcharts.getOptions().colors[7]
+			    },
+			    /* colorAxis: 
+			    {
+		           	stops: 
+		            [
+		             	[0, '#FFFFFF'],
+		             	[0.01, '#5DBA76'],
+		            	[0.09, '#90ed7d'],
+		            	[0.2, '#EED971FF'],
+		            	[0.4, '#ffbf00'],
+		            	[0.5, '#F30000']
+		        	],
+		            minColor: '#ff0000',
+		            maxColor: '#ffff00'
+		        }, */
+				legend: legendmap,
+				//tooltip: tooltipmap,
+				tooltip: {enabled: false},
+			    credits: creditsmap,
+				series: 
+				[{
+			    	name: '% monthly churn',
+			    	borderWidth: 1,
+	    		    borderColor: Highcharts.getOptions().colors[7],
+			        data: dataArray3,
+			        dataLabels: datalabelsmap
+			    }],
+				responsive: responsivemap
+			});
+		},300);
+		setTimeout(function()
+		{
+			fnAddGrayToCols();
+		},300);
+	}
+	function fnAddGrayToCols()
+	{
+		var pathElements = $("#churnChart3 svg .highcharts-heatmap-series path");
+		console.info("Length: "+pathElements.length);
+		for(i=0; i<pathElements.length; i++)
+		{
+			var pal = $(pathElements[i]).attr("aria-label");
+			console.info(pal);
+			if(pal.includes("0-6M") || pal.includes("6-12M"))
+			{
+				$(pathElements[i]).attr("fill","#9A9A9A");
+			}			
+		}
+	}
+	function fnGetCustDetails(o)
+	{
+		var cardId = $(o).attr("id");
+		var segment = "";
+		switch(cardId)
+		{ 
+			case 'newCustomerI':
+			{
+				segment = 'New Customer'; break;
+			}
+			case 'championsI':
+			{
+				segment = 'Champions'; break;
+			}
+			case 'loyalistsI':
+			{
+				segment = 'Loyalists'; break;
+			}
+			case 'potentialsI':
+			{
+				segment = 'Potentials'; break;
+			}
+			case 'shouldntLoseI':
+			{
+				segment = 'Shouldnt Lose'; break;
+			}
+			case 'needAttentionI':
+			{
+				segment = 'Need Attention'; break;
+			}
+			case 'almostLostI':
+			{
+				segment = 'Almost Lost'; break;
+			}
+			case 'sleepersI':
+			{
+				segment = 'Sleepers'; break;
+			}
+		}
+		$.get(
+		{
+			url: "JumpToCampaignServlet",
+			data: 
+			{
+				segment: segment
+			},
+			success: function(data)
+			{
+				var page = $(data).find("Page").text();
+				var seg = $(data).find("Seg").text();
+				location.href = page + "?" + "seg=" + seg;
+			}
+		});
+	}
+	</script>
+</head>
+
+<body onload="fnLoadSegmentationData();">
+<div class="content container-fluid">
+	<nav class="navbar navbar-expand-sm bg-secondary navbar-dark">
+		<ul class="navbar-nav mr-auto">
+			<li class="nav-item">
+				<a class="nav-link" href="executiveSummary.html">Executive Summary</a>
+		    </li>
+		    <li class="nav-item">
+				<a class="nav-link" href="overview.html">Overview</a>
+		    </li>
+		    <li class="nav-item active">
+				<a class="nav-link" href="customerAnalysis.html">Customer Analysis</a>
+		    </li>
+		    <li class="nav-item">
+				<a class="nav-link" href="productAnalysis.html">Product Analysis</a>
+		    </li>
+		    <li class="nav-item">
+				<a class="nav-link" href="campaignAnalysis.html">Campaign Analysis</a>
+		    </li>
+		</ul>
+		<ul class="navbar-nav">
+		    <li class="nav-item dropdown">
+				<a class="nav-link dropdown-toggle" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+					<span class="icon"><i class="fas fa-user"></i></span>
+					<span>Kiranmayi</span>
+				</a>
+	        	<div class="dropdown-menu dropdown-menu-right" aria-labelledby="navbarDropdown" style="margin-top: 12px;">
+	          		<a class="dropdown-item" href="settings.jsp">Change Password</a>
+	          		<a class="dropdown-item" href="#">Manage stores</a>
+	          		<div class="dropdown-divider"></div>
+	          		<form action="LogoutServlet" method="get" id="logoutForm">
+	          			<a class="dropdown-item" onclick="fnLogout()">Log out</a>
+	          		</form>
+	        	</div>
+			</li>
+		</ul>
+	</nav>
+	<ul class="nav nav-tabs">
+		<li class="nav-item active"><a class="nav-link" href="#1a" data-toggle="tab" onclick="fnLoadSegmentationData()">Segmentation</a></li>
+		<li class="nav-item"><a class="nav-link" href="#1b" data-toggle="tab" onclick="fnLoadChurnEvolution(); fnLoadChurnRevenueLost(); fnLoadChurnSegmentation();">Churn</a></li>
+	</ul>
+	<div class="tab-content clearfix">
+		<div class="tab-pane active" id="1a">
+			<div id="cardSegmentsSpinner" class="spinner-purple" style="text-align:center"></div>
+			<div class="cardSegments">
+				<div class="card-deck">
+					<div class="card  mb-2" id="newCustomer">
+						<div class="card-body">
+						    <p class="card-title">New Customer<i class="fas fa-external-link-alt" id="newCustomerI" style="float:right;color: #7851a1;" onclick="fnGetCustDetails(this)"></i></p>
+						    <div class="card-text">
+								<p><span id="newCustomerOT"></span>x Orders &amp; <span id="newCustomerVT"></span>x of Avg Rev</p>
+								<div class="row" data-toggle="tooltip" data-placement="left" title="Customers">
+									<i class="fas fa-users col-6"></i>
+									<span class="col-6" id="newCustomerCustomers"></span>
+								</div>
+								<div class="row" data-toggle="tooltip" data-placement="left" title="Sales">
+									<i class="fas fa-money-bill col-6"></i>
+									<span class="col-6" id="newCustomerSales"></span>
+								</div>
+								<div class="row" data-toggle="tooltip" data-placement="left" title="Tenure">
+									<i class="far fa-calendar-check col-6"></i>
+									<p><span class="col-6" id="newCustomerTenure"></span>Days</p>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="card  mb-2" id="champions">
+						<div class="card-body">
+							<p class="card-title">Champions<i class="fas fa-external-link-alt" id="championsI" style="float:right;color: #7851a1;" onclick="fnGetCustDetails(this)"></i></p>
+							<div class="card-text">
+								<p><span id="championsOT"></span>x Orders &amp; <span id="championsVT"></span>x of Avg Rev</p>
+								<div class="row" data-toggle="tooltip" data-placement="left" title="Customers">
+									<i class="fas fa-users col-6"></i>
+									<span class="col-6" id="championsCustomers"></span>
+								</div>
+								<div class="row" data-toggle="tooltip" data-placement="left" title="Sales">
+									<i class="fas fa-money-bill col-6"></i>
+									<span class="col-6" id="championsSales"></span>
+								</div>
+								<div class="row" data-toggle="tooltip" data-placement="left" title="Tenure">
+									<i class="far fa-calendar-check col-6"></i>
+									<p><span class="col-6" id="championsTenure"></span> Days</p>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="card  mb-2" id="loyalists">
+						<div class="card-body">
+						    <p class="card-title">Loyalists<i class="fas fa-external-link-alt" id="loyalistsI" style="float:right;color: #7851a1;" onclick="fnGetCustDetails(this)"></i></p>
+						    <div class="card-text">
+								<p><span id="loyalistsOT"></span>x Orders &amp; <span id="loyalistsVT"></span>x of Avg Rev</p>
+								<div class="row" data-toggle="tooltip" data-placement="bottom" title="Customers">
+									<i class="fas fa-users col-6"></i>
+									<span class="col-6" id="loyalistsCustomers"></span>
+								</div>
+								<div class="row" data-toggle="tooltip" data-placement="bottom" title="Sales">
+									<i class="fas fa-money-bill col-6"></i>
+									<span class="col-6" id="loyalistsSales"></span>
+								</div>
+								<div class="row" data-toggle="tooltip" data-placement="bottom" title="Tenure">
+									<i class="far fa-calendar-check col-6"></i>
+									<p><span class="col-6" id="loyalistsTenure"></span> Days</p>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="card  mb-2" id="potentials">
+						<div class="card-body">
+						    <p class="card-title">Potentials<i class="fas fa-external-link-alt" id="potentialsI" style="float:right;color: #7851a1;" onclick="fnGetCustDetails(this)"></i></p>
+						    <div class="card-text">
+								<p><span id="potentialsOT"></span>x Orders &amp; <span id="potentialsVT"></span>x of Avg Rev</p>
+								<div class="row" data-toggle="tooltip" data-placement="left" title="Customers">
+									<i class="fas fa-users col-6"></i>
+									<span class="col-6" id="potentialsCustomers"></span>
+								</div>
+								<div class="row" data-toggle="tooltip" data-placement="left" title="Sales">
+									<i class="fas fa-money-bill col-6"></i>
+									<span class="col-6" id="potentialsSales"></span>
+								</div>
+								<div class="row" data-toggle="tooltip" data-placement="left" title="Tenure">
+									<i class="far fa-calendar-check col-6"></i>
+									<p><span class="col-6" id="potentialsTenure"></span> Days</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<br/>
+				<div class="card-deck">
+					<div class="card  mb-2" id="shouldntLose">
+						<div class="card-body">
+						    <p class="card-title">Shouldn't Lose<i class="fas fa-external-link-alt" id="shouldntLoseI" style="float:right;color: #7851a1;" onclick="fnGetCustDetails(this)"></i></p>
+						    <div class="card-text">
+								<p><span id="shouldntLoseOT"></span>x Orders &amp; <span id="shouldntLoseVT"></span>x of Avg Rev</p>
+								<div class="row" data-toggle="tooltip" data-placement="left" title="Customers">
+									<i class="fas fa-users col-6"></i>
+									<span class="col-6" id="shouldntLoseCustomers"></span>
+								</div>
+								<div class="row" data-toggle="tooltip" data-placement="left" title="Sales">
+									<i class="fas fa-money-bill col-6"></i>
+									<span class="col-6" id="shouldntLoseSales"></span>
+								</div>
+								<div class="row" data-toggle="tooltip" data-placement="left" title="Tenure">
+									<i class="far fa-calendar-check col-6"></i>
+									<p><span class="col-6" id="shouldntLoseTenure"></span> Days</p>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="card  mb-2" id="needAttention">
+						<div class="card-body">
+						    <p class="card-title">Need Attention<i class="fas fa-external-link-alt" id="needAttentionI" style="float:right;color: #7851a1;" onclick="fnGetCustDetails(this)"></i></p>
+						    <div class="card-text">
+								<p><span id="needAttentionOT"></span>x Orders &amp; <span id="needAttentionVT"></span>x of Avg Rev</p>
+								<div class="row" data-toggle="tooltip" data-placement="left" title="Customers">
+									<i class="fas fa-users col-6"></i>
+									<span class="col-6" id="needAttentionCustomers"></span>
+								</div>
+								<div class="row" data-toggle="tooltip" data-placement="left" title="Sales">
+									<i class="fas fa-money-bill col-6"></i>
+									<span class="col-6" id="needAttentionSales"></span>
+								</div>
+								<div class="row" data-toggle="tooltip" data-placement="left" title="Tenure">
+									<i class="far fa-calendar-check col-6"></i>
+									<p><span class="col-6" id="needAttentionTenure"></span> Days</p>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="card  mb-2" id="almostLost">
+						<div class="card-body">
+						    <p class="card-title">Almost Lost<i class="fas fa-external-link-alt" id="almostLostI" style="float:right;color: #7851a1;" onclick="fnGetCustDetails(this)"></i></p>
+							<div class="card-text">
+								<p><span id="almostLostOT"></span>x Orders &amp; <span id="almostLostVT"></span>x of Avg Rev</p>
+								<div class="row" data-toggle="tooltip" data-placement="left" title="Customers">
+									<i class="fas fa-users col-6"></i>
+									<span class="col-6" id="almostLostCustomers"></span>
+								</div>
+								<div class="row" data-toggle="tooltip" data-placement="left" title="Sales">
+									<i class="fas fa-money-bill col-6"></i>
+									<span class="col-6" id="almostLostSales"></span>
+								</div>
+								<div class="row" data-toggle="tooltip" data-placement="left" title="Tenure">
+									<i class="far fa-calendar-check col-6"></i>
+									<p><span class="col-6" id="almostLostTenure"></span> Days</p>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="card  mb-2" id="sleepers">
+						<div class="card-body">
+						    <p class="card-title">Sleepers<i class="fas fa-external-link-alt" id="sleepersI" style="float:right;color: #7851a1;" onclick="fnGetCustDetails(this)"></i></p>
+						    <div class="card-text">
+								<p><span id="sleepersOT"></span>x Orders &amp; <span id="sleepersVT"></span>x of Avg Rev</p>
+								<div class="row" data-toggle="tooltip" data-placement="left" title="Customers">
+									<i class="fas fa-users col-6"></i>
+									<span class="col-6" id="sleepersCustomers"></span>
+								</div>
+								<div class="row" data-toggle="tooltip" data-placement="left" title="Sales">
+									<i class="fas fa-money-bill col-6"></i><span class="col-6" id="sleepersSales"></span>
+								</div>
+								<div class="row" data-toggle="tooltip" data-placement="left" title="Tenure">
+									<i class="far fa-calendar-check col-6"></i>
+									<p><span class="col-6" id="sleepersTenure"></span> Days</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row" id="barChartContainer">
+				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-6 ">
+					<div class="chart">
+						<div id="bar-chart1Spinner" class="spinner-purple" style="text-align:center"></div> 
+						<div id="bar-chart1"> </div>
+					</div>
+				</div>
+				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-6 ">
+					<div class="chart">
+						<div id="bar-chart2Spinner" class="spinner-purple" style="text-align:center"></div>
+						<div id="bar-chart2"> </div>
+					</div>
+				</div>
+				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-6 ">
+					<div class="chart">
+						<div id="bar-chart3Spinner" class="spinner-purple" style="text-align:center"></div>
+						<div id="bar-chart3"> </div>
+					</div>
+				</div>
+				<div class="col-lg-3 col-md-4 col-sm-6 col-xs-6 ">
+					<div class="chart">
+						<div id="bar-chart4Spinner" class="spinner-purple" style="text-align:center"></div>
+						<div id="bar-chart4"> </div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="tab-pane active" id="1b">
+			<div class="row">
+				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 ">
+					<div id="churnChart1Spinner" class="spinner-purple" style="text-align:center"></div>
+					<div id="churnChart1"></div>
+				</div>
+				<div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 ">
+					<div id="churnRevLostChartSpinner" class="spinner-purple" style="text-align:center"></div>
+					<div id="churnRevLostChart"></div>
+				</div>
+			</div>
+			<br/>
+			<div class="row">
+				<div class="col-lg-4 col-md-4 col-sm-6 col-xs-6 ">
+					<div id="churnChart2Spinner" class="spinner-purple" style="text-align:center"></div>
+					<div id="churnChart2"></div>
+				</div>
+				<div class="col-lg-4 col-md-4 col-sm-6 col-xs-6 ">
+					<div id="churnChart3Spinner" class="spinner-purple" style="text-align:center"></div>
+					<div id="churnChart3"></div>
+				</div>
+				<div class="col-lg-4 col-md-4 col-sm-6 col-xs-6 ">
+					<div id="churnChart4Spinner" class="spinner-purple" style="text-align:center"></div>
+					<div id="churnChart4"></div>
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<footer class="footer navbar-fixed-bottom">
+		&copy;2020 Devise Math Solutions. &nbsp;&nbsp; All Rights Reserved.
+</footer>
+</body>
+</html>
